@@ -19,6 +19,7 @@ public class StripePaymentService implements IPaymentService{
         //Call the orderService api to get the order details.
 
         //Logic to generate payment link
+        Stripe.apiKey = "sk_test_51S5jDPB4KjRcvPQVLriF0BEMxrNpNdpRH6J45V6F7OrSkOFEdVNBvoSipqROF5V0XRDytXRHyLfMjT2Fgb7K6wGW00715LaC0f";
 
 
         ProductCreateParams productCreateParams =
