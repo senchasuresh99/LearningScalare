@@ -1,0 +1,79 @@
+2025-09-15T11:17:27.825+05:30  INFO 6316 --- [ProductService] [restartedMain] com.scalar.ecom.EcomApplication          : Starting EcomApplication using Java 21.0.4 with PID 6316 (C:\ScalarLearning\ProductService\target\classes started by klikumar in C:\ScalarLearning\ProductService)
+2025-09-15T11:17:27.829+05:30  INFO 6316 --- [ProductService] [restartedMain] com.scalar.ecom.EcomApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-09-15T11:17:27.898+05:30  INFO 6316 --- [ProductService] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-15T11:17:27.898+05:30  INFO 6316 --- [ProductService] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-15T11:17:28.962+05:30  INFO 6316 --- [ProductService] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-15T11:17:29.144+05:30  INFO 6316 --- [ProductService] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 172 ms. Found 2 JPA repository interfaces.
+2025-09-15T11:17:29.527+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=42683e92-2609-3c92-ba55-74bae2d6f8c4
+2025-09-15T11:17:30.271+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-15T11:17:30.293+05:30  INFO 6316 --- [ProductService] [restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-15T11:17:30.293+05:30  INFO 6316 --- [ProductService] [restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.43]
+2025-09-15T11:17:30.376+05:30  INFO 6316 --- [ProductService] [restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-15T11:17:30.377+05:30  INFO 6316 --- [ProductService] [restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2475 ms
+2025-09-15T11:17:30.716+05:30  INFO 6316 --- [ProductService] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-09-15T11:17:30.981+05:30  INFO 6316 --- [ProductService] [restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4b5a0056
+2025-09-15T11:17:30.983+05:30  INFO 6316 --- [ProductService] [restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-09-15T11:17:31.013+05:30  INFO 6316 --- [ProductService] [restartedMain] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/productservice (PostgreSQL 17.5)
+2025-09-15T11:17:31.069+05:30  INFO 6316 --- [ProductService] [restartedMain] o.f.core.internal.command.DbValidate     : Successfully validated 3 migrations (execution time 00:00.034s)
+2025-09-15T11:17:31.178+05:30  INFO 6316 --- [ProductService] [restartedMain] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 2
+2025-09-15T11:17:31.182+05:30  INFO 6316 --- [ProductService] [restartedMain] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2025-09-15T11:17:31.330+05:30  INFO 6316 --- [ProductService] [restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-15T11:17:31.420+05:30  INFO 6316 --- [ProductService] [restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.22.Final
+2025-09-15T11:17:31.472+05:30  INFO 6316 --- [ProductService] [restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-15T11:17:31.849+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-15T11:17:31.920+05:30  WARN 6316 --- [ProductService] [restartedMain] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-15T11:17:31.938+05:30  INFO 6316 --- [ProductService] [restartedMain] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 17.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-15T11:17:33.084+05:30  INFO 6316 --- [ProductService] [restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-15T11:17:33.401+05:30  INFO 6316 --- [ProductService] [restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-15T11:17:33.789+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-15T11:17:34.370+05:30  WARN 6316 --- [ProductService] [restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-15T11:17:34.938+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2025-09-15T11:17:35.015+05:30  INFO 6316 --- [ProductService] [restartedMain] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2025-09-15T11:17:35.064+05:30  WARN 6316 --- [ProductService] [restartedMain] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2025-09-15T11:17:35.096+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2025-09-15T11:17:35.135+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2025-09-15T11:17:35.140+05:30  INFO 6316 --- [ProductService] [restartedMain] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-15T11:17:35.153+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2025-09-15T11:17:35.155+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2025-09-15T11:17:35.155+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2025-09-15T11:17:35.155+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2025-09-15T11:17:35.155+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2025-09-15T11:17:35.155+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2025-09-15T11:17:35.155+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2025-09-15T11:17:35.530+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2025-09-15T11:17:35.532+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2025-09-15T11:17:35.535+05:30  INFO 6316 --- [ProductService] [restartedMain] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2025-09-15T11:17:35.537+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1757915255536 with initial instances count: 1
+2025-09-15T11:17:35.541+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application PRODUCTSERVICE with eureka with status UP
+2025-09-15T11:17:35.542+05:30  INFO 6316 --- [ProductService] [restartedMain] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1757915255542, current=UP, previous=STARTING]
+2025-09-15T11:17:35.544+05:30  INFO 6316 --- [ProductService] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080: registering service...
+2025-09-15T11:17:35.574+05:30  INFO 6316 --- [ProductService] [restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-15T11:17:35.576+05:30  INFO 6316 --- [ProductService] [restartedMain] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8080
+2025-09-15T11:17:35.578+05:30  INFO 6316 --- [ProductService] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080 - registration status: 204
+2025-09-15T11:17:35.589+05:30  INFO 6316 --- [ProductService] [restartedMain] com.scalar.ecom.EcomApplication          : Started EcomApplication in 8.466 seconds (process running for 9.51)
+2025-09-15T11:18:04.733+05:30  INFO 6316 --- [ProductService] [http-nio-8080-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-15T11:18:04.734+05:30  INFO 6316 --- [ProductService] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-15T11:18:04.735+05:30  INFO 6316 --- [ProductService] [http-nio-8080-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-09-15T11:18:04.782+05:30  INFO 6316 --- [ProductService] [http-nio-8080-exec-2] c.s.ecom.controller.ProductController    : Received Product ID: 452
+2025-09-15T11:22:35.162+05:30  INFO 6316 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-15T11:25:34.190+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application PRODUCTSERVICE with eureka with status DOWN
+2025-09-15T11:25:34.191+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1757915734191, current=DOWN, previous=UP]
+2025-09-15T11:25:34.191+05:30  INFO 6316 --- [ProductService] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080: registering service...
+2025-09-15T11:25:34.195+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-15T11:25:34.196+05:30  INFO 6316 --- [ProductService] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-15T11:25:34.208+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-15T11:25:34.211+05:30  INFO 6316 --- [ProductService] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080 - registration status: 204
+2025-09-15T11:25:34.211+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-09-15T11:25:34.217+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-09-15T11:25:34.219+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2025-09-15T11:25:37.231+05:30  WARN 6316 --- [ProductService] [DiscoveryClient-%d] c.netflix.discovery.TimedSupervisorTask  : task supervisor shutting down, can't accept the task
+2025-09-15T11:25:37.231+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Unregistering ...
+2025-09-15T11:25:37.239+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080 - deregister  status: 200
+2025-09-15T11:25:37.241+05:30  INFO 6316 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient

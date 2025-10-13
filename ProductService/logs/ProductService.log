@@ -1,0 +1,44 @@
+2025-09-16T01:26:20.197+05:30  WARN 21612 --- [ProductService] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=10h8m17s590ms688µs700ns).
+2025-09-16T08:37:26.326+05:30  WARN 21612 --- [ProductService] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=7h11m9s131ms114µs400ns).
+2025-09-16T08:40:09.516+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:01:09.886+05:30  WARN 21612 --- [ProductService] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=19m43s490ms204µs).
+2025-09-16T09:04:23.026+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:09:23.027+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:14:23.032+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:19:23.037+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:24:23.043+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:29:23.048+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:34:23.056+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:39:23.068+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:44:23.075+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:49:23.077+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:54:23.086+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T09:59:23.096+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T10:04:23.110+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T10:09:23.128+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T10:14:23.143+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T10:19:23.155+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T10:24:23.159+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T10:29:23.168+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:07:00.508+05:30  WARN 21612 --- [ProductService] [HikariPool-1:housekeeper] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=37m18s986ms250µs400ns).
+2025-09-16T11:11:38.733+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:16:38.772+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:21:38.778+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:26:38.783+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:31:38.787+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:36:38.802+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:41:38.807+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:46:38.814+05:30  INFO 21612 --- [ProductService] [AsyncResolver-bootstrap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2025-09-16T11:51:32.212+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] o.s.c.n.e.s.EurekaServiceRegistry        : Unregistering application PRODUCTSERVICE with eureka with status DOWN
+2025-09-16T11:51:32.213+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1758003692213, current=DOWN, previous=UP]
+2025-09-16T11:51:32.214+05:30  INFO 21612 --- [ProductService] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080: registering service...
+2025-09-16T11:51:32.245+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-16T11:51:32.248+05:30  INFO 21612 --- [ProductService] [DiscoveryClient-InstanceInfoReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080 - registration status: 204
+2025-09-16T11:51:32.271+05:30  INFO 21612 --- [ProductService] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-16T11:51:32.293+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-16T11:51:32.324+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-09-16T11:51:32.375+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-09-16T11:51:32.404+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Shutting down DiscoveryClient ...
+2025-09-16T11:51:35.424+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Unregistering ...
+2025-09-16T11:51:35.469+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTSERVICE/10.51.243.192:ProductService:8080 - deregister  status: 200
+2025-09-16T11:51:35.470+05:30  INFO 21612 --- [ProductService] [SpringApplicationShutdownHook] com.netflix.discovery.DiscoveryClient    : Completed shut down of DiscoveryClient
