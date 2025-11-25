@@ -1,0 +1,30 @@
+2025-10-14T08:13:59.385+05:30  INFO 36720 --- [ProductService] [restartedMain] com.scalar.ecom.EcomApplication          : Starting EcomApplication using Java 21.0.4 with PID 36720 (C:\JavaCode\ScalarLearning\ProductService\target\classes started by ssencha in C:\JavaCode\ScalarLearning)
+2025-10-14T08:13:59.391+05:30  INFO 36720 --- [ProductService] [restartedMain] com.scalar.ecom.EcomApplication          : No active profile set, falling back to 1 default profile: "default"
+2025-10-14T08:13:59.462+05:30  INFO 36720 --- [ProductService] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-14T08:13:59.463+05:30  INFO 36720 --- [ProductService] [restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-14T08:14:00.601+05:30  INFO 36720 --- [ProductService] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-14T08:14:00.834+05:30  INFO 36720 --- [ProductService] [restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 210 ms. Found 2 JPA repository interfaces.
+2025-10-14T08:14:01.269+05:30  INFO 36720 --- [ProductService] [restartedMain] o.s.cloud.context.scope.GenericScope     : BeanFactory id=42683e92-2609-3c92-ba55-74bae2d6f8c4
+2025-10-14T08:14:01.706+05:30  WARN 36720 --- [ProductService] [restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Unable to start web server
+2025-10-14T08:14:01.729+05:30  INFO 36720 --- [ProductService] [restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-10-14T08:14:01.766+05:30 ERROR 36720 --- [ProductService] [restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Failed to bind properties under 'server.port' to java.lang.Integer:
+
+    Property: server.port
+    Value: "${PRODUCT-SERVICE-PORT-NUMBER}"
+    Origin: class path resource [application.properties] - 2:15
+    Reason: failed to convert java.lang.String to java.lang.Integer (caused by java.lang.NumberFormatException: For input string: "${PRODUCT-SERVICE-PORT-NUMBER}")
+
+Action:
+
+Update your application's configuration
+
