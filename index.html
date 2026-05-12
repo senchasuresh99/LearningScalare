@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PawnSecure | Secure Dealer Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .hidden {
+        display: none;
+      }
+      .active-view {
+        display: block;
+        animation: fadeIn 0.3s ease-in;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      #reviewHistory::-webkit-scrollbar {
+        width: 4px;
+      }
+      #reviewHistory::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+      /* Prevent iframe from breaking layout */
+      #aadhaarFrame {
+        background: white;
+        min-height: 500px;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 min-h-screen font-sans text-gray-900">
+    <nav class="bg-indigo-700 text-white shadow-md p-4 sticky top-0 z-50">
+      <div class="container mx-auto flex items-center justify-between gap-4">
+        <div class="flex items-center justify-between w-full md:w-auto">
+          <h1 class="text-2xl font-bold tracking-tight">PawnSecure</h1>
+          <button
+            id="mobileNavToggle"
+            class="md:hidden p-2 rounded-md bg-indigo-600 hover:bg-indigo-500 transition"
+            aria-label="Toggle navigation"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+        <div
+          id="navLinks"
+          class="hidden md:flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6 w-full md:w-auto bg-indigo-700 md:bg-transparent p-4 md:p-0 rounded-xl md:rounded-none"
+        >
+          <button
+            onclick="showView('dealerList')"
+            id="adminNav"
+            class="hidden hover:text-indigo-200 transition font-medium"
+          >
+            Manage Dealers
+          </button>
+          <button
+            onclick="showView('dealerDashboard')"
+            id="dealerNav"
+            class="hover:text-indigo-200 transition font-medium"
+          >
+            Customer Reviews
+          </button>
+          <button
+            onclick="logout()"
+            class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm font-bold transition"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div
+      id="aadhaarModal"
+      class="hidden fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col"
+      >
+        <div
+          class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl"
+        >
+          <h3 class="font-bold text-gray-800">
+            Official UIDAI Verification Portal
+          </h3>
+          <button
+            onclick="closeAadhaarModal()"
+            class="text-gray-400 hover:text-red-600 text-3xl line-height-0"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="flex-1 overflow-hidden">
+          <iframe
+            id="aadhaarFrame"
+            src=""
+            class="w-full h-full border-none"
+          ></iframe>
+        </div>
+        <div class="p-3 border-t bg-gray-50 rounded-b-xl text-center">
+          <p class="text-xs text-gray-500 font-medium">
+            Download the E-Aadhaar PDF, then close this window to search in
+            PawnSecure.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <main class="container mx-auto py-8 px-4">
+      <div
+        id="statusBanner"
+        class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 max-w-sm w-full opacity-0 pointer-events-none transition-all duration-300"
+      ></div>
+      <section
+        id="loginView"
+        class="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-xl border border-gray-100"
+      >
+        <div id="authHeader" class="mb-6">
+          <h2 class="text-2xl font-bold text-center text-gray-800">
+            Portal Login
+          </h2>
+        </div>
+        <form id="loginForm" class="space-y-4">
+          <input
+            type="email"
+            id="loginEmail"
+            placeholder="Email"
+            class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+          />
+          <input
+            type="password"
+            id="loginPass"
+            placeholder="Password"
+            class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
+            required
+          />
+          <button
+            type="submit"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition"
+          >
+            Sign In
+          </button>
+          <p class="text-center text-sm text-gray-600 mt-6">
+            First time?
+            <button
+              type="button"
+              onclick="toggleAuthMode(true)"
+              class="text-indigo-600 font-bold hover:underline"
+            >
+              Register Dealer
+            </button>
+          </p>
+        </form>
+
+        <form id="dealerRegForm" class="hidden space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <input
+              type="text"
+              id="dRegName"
+              placeholder="Full Name"
+              class="col-span-2 border p-2 rounded text-sm"
+              required
+            />
+            <input
+              type="email"
+              id="dRegEmail"
+              placeholder="Email"
+              class="border p-2 rounded text-sm"
+              required
+            />
+            <input
+              type="password"
+              id="dRegPass"
+              placeholder="Password"
+              class="border p-2 rounded text-sm"
+              required
+            />
+            <input
+              type="tel"
+              id="dRegPhone"
+              placeholder="Phone"
+              class="border p-2 rounded text-sm"
+              required
+            />
+            <input
+              type="text"
+              id="dRegGst"
+              placeholder="GST Number"
+              class="border p-2 rounded text-sm uppercase"
+              required
+              maxlength="15"
+            />
+            <input
+              type="text"
+              id="dRegShop"
+              placeholder="Shop Name"
+              class="col-span-2 border p-2 rounded text-sm"
+              required
+            />
+            <input
+              type="text"
+              id="dRegAddr"
+              placeholder="Shop Address"
+              class="col-span-2 border p-2 rounded text-sm"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg"
+          >
+            Create Account
+          </button>
+          <button
+            type="button"
+            onclick="toggleAuthMode(false)"
+            class="w-full text-gray-500 text-xs hover:underline"
+          >
+            Back to Login
+          </button>
+        </form>
+      </section>
+
+      <section id="dealerListView" class="hidden">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Dealers</h2>
+        <div
+          class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+        >
+          <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b">
+              <tr>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase">
+                  Shop
+                </th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase">
+                  GST
+                </th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase">
+                  Phone
+                </th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase">
+                  Status
+                </th>
+                <th class="p-4 text-xs font-bold text-gray-500 uppercase">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              id="dealerTableBody"
+              class="divide-y divide-gray-100"
+            ></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section
+        id="dealerDashboardView"
+        class="hidden max-w-4xl mx-auto space-y-6"
+      >
+        <div
+          class="bg-white p-6 rounded-xl shadow-md border-t-4 border-indigo-600"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-gray-800">Verify Customer Aadhaar</h3>
+            <button
+              onclick="openAadhaarPortalWindow()"
+              class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1"
+            >
+              <span>Verify Customer By Aadhaar Portal</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-3 w-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </button>
+          </div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 gap-3"
+          >
+            <input
+              type="text"
+              id="searchAadhaar"
+              maxlength="12"
+              placeholder="12-digit Aadhaar"
+              class="flex-1 border p-3 rounded-lg font-mono outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-describedby="searchHint"
+            />
+            <button
+              id="searchButton"
+              onclick="handleSearch()"
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-bold transition disabled:opacity-50"
+              disabled
+            >
+              Search
+            </button>
+          </div>
+          <p id="searchHint" class="text-xs text-gray-200 mt-2">
+            Enter a 12-digit Aadhaar number to search for a customer or register
+            a new one.
+          </p>
+        </div>
+
+        <div
+          id="reviewSection"
+          class="hidden bg-white p-8 rounded-xl shadow-lg border-t-4 border-red-500"
+        >
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h3 class="text-2xl font-bold" id="customerDisplayName">
+                Customer Info
+              </h3>
+              <p
+                id="customerAadhaarDisplay"
+                class="text-gray-500 font-mono text-sm mt-1"
+              ></p>
+            </div>
+            <span
+              class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-[10px] font-bold uppercase"
+              >Verified Profile</span
+            >
+          </div>
+          <div
+            id="reviewHistory"
+            class="mb-8 space-y-4 max-h-60 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-100"
+          ></div>
+
+          <form id="reviewForm" class="space-y-4 border-t pt-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <select
+                id="revType"
+                class="border p-3 rounded-lg bg-white font-bold outline-none"
+              >
+                <option value="SAFE">Safe</option>
+                <option value="MEDIUM_RISK">Low Risk</option>
+                <option value="HIGH_RISK">High Risk</option>
+              </select>
+              <textarea
+                id="revComment"
+                class="md:col-span-3 border p-3 rounded-lg outline-none"
+                placeholder="Provide details for this review..."
+                required
+              ></textarea>
+            </div>
+            <div class="md:col-span-4 flex justify-center">
+              <button
+                type="submit"
+                class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-bold transition"
+              >
+                Submit Review
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div
+          id="registrationSection"
+          class="hidden bg-white p-8 rounded-xl shadow-lg border-t-4 border-yellow-500"
+        >
+          <h3 class="text-xl font-bold mb-4 text-yellow-700">
+            Register New Customer
+          </h3>
+          <form id="regForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              id="regName"
+              placeholder="Full Name"
+              class="border p-3 rounded-lg"
+              required
+            />
+            <input
+              type="text"
+              id="regAadhaarDisplay"
+              class="border p-3 rounded-lg bg-gray-100 font-mono"
+              readonly
+            />
+            <input
+              type="tel"
+              id="regPhone"
+              placeholder="Phone Number"
+              class="border p-3 rounded-lg"
+              required
+            />
+            <input
+              type="text"
+              id="regAddress"
+              placeholder="Customer Address"
+              class="border p-3 rounded-lg"
+              required
+            />
+            <button
+              type="submit"
+              class="md:col-span-2 bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-bold"
+            >
+              Register Customer
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+    <script>
+      const API_BASE = "http://localhost:8080/api";
+      let activeCustomerId = null;
+      let rawSearchValue = "";
+      let toastTimeout = null;
+
+      function openAadhaarPortalWindow() {
+        const width = 600;
+        const height = 800;
+        const left = window.innerWidth / 2 - width / 2;
+        const top = window.innerHeight / 2 - height / 2;
+        window.open(
+          "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar/en",
+          "UIDAIPortal",
+          `width=${width},height=${height},top=${top},left=${left},scrollbars=yes,resizable=yes`,
+        );
+      }
+
+      function openAadhaarModal() {
+        const modal = document.getElementById("aadhaarModal");
+        const iframe = document.getElementById("aadhaarFrame");
+        iframe.src = "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar/en";
+        modal.classList.remove("hidden");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeAadhaarModal() {
+        document.getElementById("aadhaarModal").classList.add("hidden");
+        document.getElementById("aadhaarFrame").src = "";
+        document.body.style.overflow = "auto";
+      }
+
+      function showMessage(message, type = "info") {
+        const banner = document.getElementById("statusBanner");
+        const colorClass =
+          type === "success"
+            ? "bg-green-600 text-white"
+            : type === "error"
+              ? "bg-red-600 text-white"
+              : type === "warning"
+                ? "bg-yellow-500 text-gray-900"
+                : "bg-indigo-600 text-white";
+        banner.className = `fixed bottom-6 left-1/2 z-50 -translate-x-1/2 max-w-sm w-full rounded-xl p-4 shadow-xl pointer-events-auto transition-all duration-300 ${colorClass}`;
+        banner.innerText = message;
+        banner.style.opacity = "1";
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+          banner.style.opacity = "0";
+        }, 3200);
+      }
+
+      function toggleMobileMenu() {
+        const navLinks = document.getElementById("navLinks");
+        navLinks.classList.toggle("hidden");
+      }
+
+      function setButtonLoading(button, loading, label) {
+        if (!button) return;
+        button.disabled = loading;
+        if (loading) {
+          button.dataset.originalText = button.innerHTML;
+          button.innerHTML =
+            '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>' +
+            label +
+            "</span>";
+        } else {
+          button.innerHTML = button.dataset.originalText || label;
+        }
+      }
+
+      const PawnSecure = {
+        getHeaders: () => ({
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("ps_token")}`,
+        }),
+        async handle(res) {
+          const ct = res.headers.get("content-type");
+          let data =
+            ct && ct.includes("application/json")
+              ? await res.json()
+              : await res.text();
+          if (!res.ok) throw new Error(data.message || data || "Action Failed");
+          return data;
+        },
+        async login(creds) {
+          const res = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(creds),
+          });
+          const result = await this.handle(res);
+          const role = this.parseJwt(result).role || "ROLE_USER";
+          return { token: result, role: role };
+        },
+        parseJwt(token) {
+          try {
+            return JSON.parse(atob(token.split(".")[1]));
+          } catch (e) {
+            return {};
+          }
+        },
+        async fetchDealers() {
+          return this.handle(
+            await fetch(`${API_BASE}/admin/dealers`, {
+              headers: this.getHeaders(),
+            }),
+          );
+        },
+        async searchCustomer(aadhaar) {
+          const res = await fetch(
+            `${API_BASE}/customers/search?aadhaar=${aadhaar}`,
+            { headers: this.getHeaders() },
+          );
+          return res.status === 404 ? null : this.handle(res);
+        },
+        async addCustomer(data) {
+          return this.handle(
+            await fetch(`${API_BASE}/customers`, {
+              method: "POST",
+              headers: this.getHeaders(),
+              body: JSON.stringify(data),
+            }),
+          );
+        },
+        async postReview(data) {
+          return this.handle(
+            await fetch(`${API_BASE}/reviews`, {
+              method: "POST",
+              headers: this.getHeaders(),
+              body: JSON.stringify(data),
+            }),
+          );
+        },
+        async deleteReview(id) {
+          return this.handle(
+            await fetch(`${API_BASE}/reviews/${id}`, {
+              method: "DELETE",
+              headers: this.getHeaders(),
+            }),
+          );
+        },
+      };
+
+      const normalizeId = (value) => {
+        if (value == null) return null;
+        if (typeof value === "object")
+          return normalizeId(
+            value.id ||
+              value.userId ||
+              value._id ||
+              value.uid ||
+              value.dealerId ||
+              value.reviewerId ||
+              value.sub,
+          );
+        return String(value).trim();
+      };
+
+      const getMyId = () => {
+        const token = localStorage.getItem("ps_token");
+        if (!token) return null;
+        const payload = PawnSecure.parseJwt(token);
+        return normalizeId(
+          payload.userId ||
+            payload.id ||
+            payload.sub ||
+            payload.uid ||
+            payload.dealerId ||
+            payload.user ||
+            payload.dealer,
+        );
+      };
+
+      const getReviewOwnerId = (rev) => {
+        if (!rev) return null;
+        return normalizeId(
+          rev.dealerId ||
+            rev.ownerId ||
+            rev.createdBy ||
+            rev.createdBy?.id ||
+            rev.createdBy?.userId ||
+            rev.reviewerId ||
+            rev.reviewer ||
+            rev.reviewer?.id ||
+            rev.reviewer?.userId ||
+            rev.dealer,
+        );
+      };
+
+      async function handleSearch() {
+        if (rawSearchValue.length !== 12)
+          return alert("Enter 12-digit Aadhaar");
+        try {
+          const customer = await PawnSecure.searchCustomer(rawSearchValue);
+          if (customer) {
+            activeCustomerId = customer.id;
+            document.getElementById("customerDisplayName").innerText =
+              customer.name;
+            document.getElementById("customerAadhaarDisplay").innerText =
+              `XXXX-XXXX-${rawSearchValue.slice(-4)}`;
+            const historyDiv = document.getElementById("reviewHistory");
+            const myId = getMyId();
+
+            historyDiv.innerHTML =
+              (customer.reviews || [])
+                .map((rev) => {
+                  const rId =
+                    rev.id ||
+                    rev.reviewId ||
+                    rev._id ||
+                    rev.review_id ||
+                    rev.reviewID;
+                  const dId = getReviewOwnerId(rev);
+                  const isOwner =
+                    dId != null && myId != null && String(dId) === String(myId);
+                  const reviewerName =
+                    rev.dealerName ||
+                    rev.createdByName ||
+                    rev.reviewerName ||
+                    rev.dealer?.name ||
+                    rev.createdBy?.name ||
+                    rev.reviewer?.name;
+                  const reviewerLabel = isOwner
+                    ? "Your review"
+                    : reviewerName
+                      ? reviewerName
+                      : "Dealer review";
+
+                  let border =
+                    rev.type === "HIGH_RISK"
+                      ? "border-red-500"
+                      : rev.type === "MEDIUM_RISK"
+                        ? "border-yellow-500"
+                        : "border-green-500";
+                  let text =
+                    rev.type === "HIGH_RISK"
+                      ? "text-red-600"
+                      : rev.type === "MEDIUM_RISK"
+                        ? "text-yellow-600"
+                        : "text-green-600";
+
+                  return `
+                        <div class="p-3 bg-white rounded border-l-4 ${border} shadow-sm flex flex-col sm:flex-row sm:justify-between gap-3 sm:items-center">
+                            <div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-[10px] font-bold uppercase ${text}">${rev.type}</span>
+                                    <span class="text-xs text-gray-500 uppercase">${reviewerLabel}</span>${isOwner ? '<span class="ml-2 px-1 py-0.5 text-[8px] bg-green-100 text-green-800 rounded uppercase font-semibold">Yours</span>' : ""}
+                                </div>
+                                <p class="text-sm text-gray-800">"${rev.comment}"</p>
+                            </div>
+                            ${
+                              isOwner
+                                ? `<button type="button" data-review-id="${rId}" class="delete-review-button inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold transition text-red-600 hover:bg-red-50 bg-red-50" title="Delete this review">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                                Delete
+                            </button>`
+                                : ""
+                            }
+                        </div>`;
+                })
+                .join("") ||
+              '<p class="text-center text-gray-400 py-4">No reviews yet.</p>';
+
+            document.getElementById("reviewSection").classList.remove("hidden");
+            document
+              .getElementById("registrationSection")
+              .classList.add("hidden");
+          } else {
+            document.getElementById("regAadhaarDisplay").value =
+              `XXXX-XXXX-${rawSearchValue.slice(-4)}`;
+            document
+              .getElementById("registrationSection")
+              .classList.remove("hidden");
+            document.getElementById("reviewSection").classList.add("hidden");
+          }
+        } catch (err) {
+          alert(err.message);
+        }
+      }
+
+      async function confirmDelete(id) {
+        showMessage("Deleting review…", "info");
+        console.log("Deleting review", id);
+        try {
+          await PawnSecure.deleteReview(id);
+          handleSearch();
+          showMessage("Review deleted successfully.", "success");
+        } catch (err) {
+          showMessage(err.message || "Unable to delete review.", "error");
+        }
+      }
+
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const button = e.target.querySelector('button[type="submit"]');
+          setButtonLoading(button, true, "Signing in");
+          try {
+            const res = await PawnSecure.login({
+              email: loginEmail.value,
+              password: loginPass.value,
+            });
+            localStorage.setItem("ps_token", res.token);
+            localStorage.setItem("ps_role", res.role);
+            location.reload();
+          } catch (err) {
+            showMessage(err.message || "Login failed.", "error");
+          } finally {
+            setButtonLoading(button, false, "Sign In");
+          }
+        });
+
+      document
+        .getElementById("regForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const button = e.target.querySelector('button[type="submit"]');
+          setButtonLoading(button, true, "Registering");
+          try {
+            await PawnSecure.addCustomer({
+              name: regName.value,
+              aadhaar: rawSearchValue,
+              phoneNumber: regPhone.value,
+              customerAddress: regAddress.value,
+            });
+            handleSearch();
+          } catch (err) {
+            showMessage(err.message || "Registration failed.", "error");
+          } finally {
+            setButtonLoading(button, false, "Register Customer");
+          }
+        });
+
+      document
+        .getElementById("reviewForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const button = e.target.querySelector('button[type="submit"]');
+          setButtonLoading(button, true, "Submitting");
+          try {
+            await PawnSecure.postReview({
+              customerId: activeCustomerId,
+              type: revType.value,
+              comment: revComment.value,
+            });
+            revComment.value = "";
+            handleSearch();
+            showMessage("Review submitted.", "success");
+          } catch (err) {
+            showMessage(err.message || "Unable to submit review.", "error");
+          } finally {
+            setButtonLoading(button, false, "Submit Review");
+          }
+        });
+
+      document
+        .getElementById("searchAadhaar")
+        .addEventListener("input", (e) => {
+          rawSearchValue = e.target.value.replace(/\D/g, "");
+          e.target.value = rawSearchValue;
+          const searchButton = document.getElementById("searchButton");
+          const hint = document.getElementById("searchHint");
+          const remaining = 12 - rawSearchValue.length;
+          if (remaining <= 0) {
+            searchButton.disabled = false;
+            hint.innerText = "Ready to search.";
+          } else {
+            searchButton.disabled = true;
+            hint.innerText = `${remaining} more digit${remaining === 1 ? "" : "s"} required.`;
+          }
+        });
+
+      document
+        .getElementById("reviewHistory")
+        .addEventListener("click", (event) => {
+          const button = event.target.closest(".delete-review-button");
+          if (!button) return;
+          const reviewId = button.dataset.reviewId;
+          if (!reviewId) {
+            showMessage("Review id is missing; could not delete.", "error");
+            return;
+          }
+          confirmDelete(reviewId);
+        });
+
+      function showView(v) {
+        document
+          .querySelectorAll("main > section")
+          .forEach((s) => s.classList.add("hidden"));
+        document.getElementById(v + "View").classList.remove("hidden");
+        if (window.innerWidth < 768) toggleMobileMenu();
+      }
+      function toggleAuthMode(isReg) {
+        document.getElementById("loginForm").classList.toggle("hidden", isReg);
+        document
+          .getElementById("dealerRegForm")
+          .classList.toggle("hidden", !isReg);
+      }
+      function logout() {
+        localStorage.clear();
+        location.reload();
+      }
+
+      document
+        .getElementById("mobileNavToggle")
+        .addEventListener("click", toggleMobileMenu);
+
+      window.onload = () => {
+        const role = localStorage.getItem("ps_role");
+        if (role) {
+          document.getElementById("navLinks").classList.remove("hidden");
+          if (role.includes("ADMIN")) {
+            document.getElementById("adminNav").classList.remove("hidden");
+            showView("dealerList");
+          } else {
+            document.getElementById("dealerNav").classList.remove("hidden");
+            showView("dealerDashboard");
+          }
+        }
+        document
+          .getElementById("searchAadhaar")
+          .dispatchEvent(new Event("input"));
+      };
+    </script>
+  </body>
+</html>
