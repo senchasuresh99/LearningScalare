@@ -4,15 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PawnSecure | Secure Dealer Portal</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
       .hidden {
         display: none;
       }
+
+      html {
+        scrollbar-gutter: stable;
+      }
+
+      html,
+      body {
+        overflow-x: hidden;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
       .active-view {
         display: block;
         animation: fadeIn 0.3s ease-in;
       }
+
       @keyframes fadeIn {
         from {
           opacity: 0;
@@ -21,50 +39,64 @@
           opacity: 1;
         }
       }
+
       #reviewHistory::-webkit-scrollbar {
         width: 4px;
       }
+
       #reviewHistory::-webkit-scrollbar-thumb {
         background: #cbd5e1;
         border-radius: 10px;
       }
-      /* Prevent iframe from breaking layout */
-      #aadhaarFrame {
-        background: white;
-        min-height: 500px;
+
+      @keyframes bounce-in {
+        0% {
+          transform: translateY(20px);
+          opacity: 0;
+        }
+        60% {
+          transform: translateY(-5px);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .animate-bounce-in {
+        animation: bounce-in 0.4s ease-out forwards;
       }
     </style>
+
+    <!-- App config -->
+    <script src="config.js"></script>
   </head>
+
   <body class="bg-gray-100 min-h-screen font-sans text-gray-900">
-    <nav class="bg-indigo-700 text-white shadow-md p-4 sticky top-0 z-50">
-      <div class="container mx-auto flex items-center justify-between gap-4">
-        <div class="flex items-center justify-between w-full md:w-auto">
-          <h1 class="text-2xl font-bold tracking-tight">PawnSecure</h1>
-          <button
-            id="mobileNavToggle"
-            class="md:hidden p-2 rounded-md bg-indigo-600 hover:bg-indigo-500 transition"
-            aria-label="Toggle navigation"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+    <nav
+      class="bg-gradient-to-r from-indigo-900 via-purple-800 to-blue-800 text-white shadow-xl p-4 sticky top-0 z-50"
+    >
+      <div class="container mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <img
+            src="https://github.com/senchasuresh99/LearningScalare/blob/main/logo1.png?raw=true"
+            alt="PawnSecure Logo"
+            class="w-12 h-12 object-contain bg-white rounded-lg p-1 shadow-md"
+          />
+
+          <div class="min-w-0">
+            <h1 class="text-xl md:text-2xl font-bold leading-tight truncate">
+              PawnSecure
+            </h1>
+
+            <p
+              class="text-[9px] md:text-[10px] text-indigo-100 leading-tight truncate"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          </button>
+              Trusted Records • Secure Connections
+            </p>
+          </div>
         </div>
-        <div
-          id="navLinks"
-          class="hidden md:flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6 w-full md:w-auto bg-indigo-700 md:bg-transparent p-4 md:p-0 rounded-xl md:rounded-none"
-        >
+        <div id="navLinks" class="hidden flex items-center space-x-6">
           <button
             onclick="showView('dealerList')"
             id="adminNav"
@@ -81,182 +113,631 @@
           </button>
           <button
             onclick="logout()"
-            class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-md text-sm font-bold transition"
+            class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-md transition"
           >
+            <!-- Logout icon -->
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 16l4-4m0 0l-4-4m4 4H7"
+              />
+              <path
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M7 20h4a2 2 0 002-2V6a2 2 0 00-2-2H7"
+              />
+            </svg>
+
             Logout
           </button>
         </div>
       </div>
     </nav>
-
+    <!-- Terms & Conditions Modal -->
     <div
-      id="aadhaarModal"
-      class="hidden fixed inset-0 bg-black bg-opacity-60 z-[100] flex items-center justify-center p-4"
+      id="termsModal"
+      onclick="closeTermsModal()"
+      class="fixed inset-0 bg-black/50 z-[120] hidden items-center justify-center p-4"
     >
-      <div
-        class="bg-white rounded-xl shadow-2xl w-full max-w-5xl h-[85vh] flex flex-col"
-      >
+      <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-6 relative">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Terms & Conditions</h2>
+
         <div
-          class="p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl"
+          class="text-sm text-gray-600 space-y-3 max-h-[300px] overflow-y-auto pr-2"
         >
-          <h3 class="font-bold text-gray-800">
-            Official UIDAI Verification Portal
-          </h3>
-          <button
-            onclick="closeAadhaarModal()"
-            class="text-gray-400 hover:text-red-600 text-3xl line-height-0"
-          >
-            &times;
-          </button>
-        </div>
-        <div class="flex-1 overflow-hidden">
-          <iframe
-            id="aadhaarFrame"
-            src=""
-            class="w-full h-full border-none"
-          ></iframe>
-        </div>
-        <div class="p-3 border-t bg-gray-50 rounded-b-xl text-center">
-          <p class="text-xs text-gray-500 font-medium">
-            Download the E-Aadhaar PDF, then close this window to search in
-            PawnSecure.
+          <p>
+            Welcome to <strong>PawnSecure</strong>. By accessing or using this
+            platform, you agree to comply with and be bound by the following
+            Terms & Conditions.
           </p>
+
+          <ol class="list-decimal pl-4 space-y-2">
+            <li>
+              Dealers are solely responsible for ensuring that all customer
+              information submitted on this platform is accurate, lawful, and
+              collected with proper customer consent.
+            </li>
+
+            <li>
+              PawnSecure operates solely as a secure dealer verification and
+              record‑management platform and does not guarantee the
+              authenticity, accuracy, or completeness of user‑submitted
+              information.
+            </li>
+
+            <li>
+              Customer Aadhaar or identity information must be used strictly for
+              lawful verification purposes and in accordance with applicable
+              laws and regulations.
+            </li>
+
+            <li>
+              Unauthorized access, misuse, fake reviews, fraud, record
+              manipulation, or illegal platform usage may result in suspension,
+              termination, or legal action.
+            </li>
+
+            <li>
+              Dealers are prohibited from uploading false, misleading,
+              offensive, illegal, or unauthorized customer information.
+            </li>
+
+            <li>
+              PawnSecure reserves the right to monitor, review, suspend,
+              restrict, or remove accounts or content that violate platform
+              policies or laws.
+            </li>
+
+            <li>
+              PawnSecure is a subscription‑based service and requires an active
+              paid subscription for full access.
+            </li>
+
+            <li>
+              Dealer accounts operate on a yearly subscription model from the
+              date of activation.
+            </li>
+
+            <li>
+              Subscription renewal is required to continue platform access after
+              the subscription period expires.
+            </li>
+          </ol>
+          <p>
+            <strong
+              >Failure to renew may result in restricted access or account
+              deactivation.</strong
+            >
+          </p>
+          <ol class="list-decimal pl-4 space-y-2">
+            <li>
+              Subscription fees are non‑refundable unless explicitly stated
+              otherwise.
+            </li>
+
+            <li>
+              PawnSecure may modify pricing, plans, features, or service
+              availability at any time without prior notice.
+            </li>
+
+            <li>
+              PawnSecure is not responsible for losses, disputes, damages, fraud
+              claims, or legal issues arising from dealer‑submitted data or
+              transactions.
+            </li>
+
+            <li>
+              Dealers are responsible for maintaining the security and
+              confidentiality of their login credentials.
+            </li>
+
+            <li>
+              Services may be temporarily suspended for maintenance, upgrades,
+              or operational improvements.
+            </li>
+
+            <li>
+              Platform usage must comply with all applicable local, state, and
+              national laws.
+            </li>
+
+            <li>
+              Continued use of the platform confirms acceptance of these Terms &
+              Conditions.
+            </li>
+
+            <li>
+              PawnSecure reserves the right to update these Terms & Conditions
+              at any time. Continued usage constitutes acceptance of updates.
+            </li>
+          </ol>
+        </div>
+
+        <div class="mt-6 flex justify-end gap-3">
+          <button
+            onclick="closeTermsModal()"
+            class="px-4 py-2 text-sm rounded-lg bg-gray-200 hover:bg-gray-300"
+          >
+            Close
+          </button>
+
+          <button
+            onclick="acceptTerms()"
+            class="px-4 py-2 text-sm rounded-lg bg-indigo-600 text-white hover:bg-indigo-700"
+          >
+            Accept
+          </button>
         </div>
       </div>
     </div>
-
     <main class="container mx-auto py-8 px-4">
-      <div
-        id="statusBanner"
-        class="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 max-w-sm w-full opacity-0 pointer-events-none transition-all duration-300"
-      ></div>
       <section
         id="loginView"
         class="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-xl border border-gray-100"
       >
-        <div id="authHeader" class="mb-6">
-          <h2 class="text-2xl font-bold text-center text-gray-800">
-            Portal Login
-          </h2>
+        <div class="flex justify-center">
+          <img
+            src="https://github.com/senchasuresh99/LearningScalare/blob/main/logo3.png?raw=true"
+            alt="PawnSecure Logo"
+            class="max-h-56 w-full max-w-[360px] object-contain"
+          />
         </div>
+
         <form id="loginForm" class="space-y-4">
-          <input
-            type="email"
-            id="loginEmail"
-            placeholder="Email"
-            class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
-          <input
-            type="password"
-            id="loginPass"
-            placeholder="Password"
-            class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500"
-            required
-          />
+          <!-- ✅ EMAIL -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-600">
+              Email Address
+            </label>
+
+            <div
+              class="mt-1 flex items-center border bg-gray-50 rounded-lg px-3 py-3"
+            >
+              <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                <svg
+                  class="h-5 w-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-width="2"
+                    d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"
+                  />
+                </svg>
+              </div>
+
+              <input
+                type="email"
+                id="loginEmail"
+                placeholder="Enter your email address"
+                class="w-full bg-transparent outline-none text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- ✅ PASSWORD -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-600">
+              Password
+            </label>
+
+            <div
+              class="mt-1 flex items-center border bg-gray-50 rounded-lg px-3 py-3"
+            >
+              <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                <svg
+                  class="h-5 w-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-width="2"
+                    d="M12 11c0-1.1.9-2 2-2h4a2 2 0 012 2v6a2 2 0 01-2 2h-4a2 2 0 01-2-2v-6z"
+                  />
+                  <path stroke-width="2" d="M6 11V7a6 6 0 0112 0v4" />
+                </svg>
+              </div>
+
+              <input
+                type="password"
+                id="loginPass"
+                placeholder="Enter your password"
+                class="w-full bg-transparent outline-none text-sm"
+                required
+              />
+
+              <button type="button" onclick="togglePassword()">
+                <!-- <svg
+                  class="h-5 w-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path
+                    stroke-width="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg> -->
+              </button>
+            </div>
+          </div>
+
+          <!-- ✅ REMEMBER / FORGOT -->
+          <div class="flex justify-between items-center text-sm">
+            <label class="flex items-center gap-2 text-gray-600">
+              <input type="checkbox" />
+              Remember me
+            </label>
+
+            <button
+              type="button"
+              onclick="openForgotPassword()"
+              class="text-indigo-500 font-semibold hover:underline"
+            >
+              Forgot Password?
+            </button>
+          </div>
+
+          <!-- ✅ SIGN IN -->
           <button
             type="submit"
-            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition"
+            id="loginBtn"
+            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition disabled:opacity-60"
           >
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-width="2"
+                d="M12 11c0-1.1.9-2 2-2h4a2 2 0 012 2v6a2 2 0 01-2 2h-4a2 2 0 01-2-2v-6z"
+              />
+              <path stroke-width="2" d="M6 11V7a6 6 0 0112 0v4" />
+            </svg>
             Sign In
           </button>
-          <p class="text-center text-sm text-gray-600 mt-6">
+
+          <!-- ✅ DIVIDER -->
+          <div class="border-t my-6"></div>
+
+          <!-- ✅ REGISTER -->
+          <p class="text-center text-sm text-gray-600">
             First time?
             <button
               type="button"
               onclick="toggleAuthMode(true)"
               class="text-indigo-600 font-bold hover:underline"
             >
-              Register Dealer
+              Register Dealer →
             </button>
           </p>
         </form>
 
         <form id="dealerRegForm" class="hidden space-y-4">
-          <div class="grid grid-cols-2 gap-3">
+          <!-- ✅ FULL NAME -->
+          <div class="flex items-center border bg-gray-50 rounded-lg px-3 py-3">
+            <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+              <!-- user icon -->
+              <svg
+                class="h-5 w-5 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-width="2" d="M16 14a4 4 0 10-8 0v2h8v-2z" />
+                <path stroke-width="2" d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
+              </svg>
+            </div>
             <input
               type="text"
               id="dRegName"
               placeholder="Full Name"
-              class="col-span-2 border p-2 rounded text-sm"
+              class="w-full bg-transparent outline-none text-sm"
               required
             />
-            <input
-              type="email"
-              id="dRegEmail"
-              placeholder="Email"
-              class="border p-2 rounded text-sm"
-              required
-            />
-            <input
-              type="password"
-              id="dRegPass"
-              placeholder="Password"
-              class="border p-2 rounded text-sm"
-              required
-            />
-            <input
-              type="tel"
-              id="dRegPhone"
-              placeholder="Phone"
-              class="border p-2 rounded text-sm"
-              required
-            />
-            <input
-              type="text"
-              id="dRegGst"
-              placeholder="GST Number"
-              class="border p-2 rounded text-sm uppercase"
-              required
-              maxlength="15"
-            />
+          </div>
+
+          <!-- ✅ EMAIL + PASSWORD -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Email -->
+            <div
+              class="flex items-center border bg-gray-50 rounded-lg px-3 py-3"
+            >
+              <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                <svg
+                  class="h-5 w-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-width="2"
+                    d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="email"
+                id="dRegEmail"
+                placeholder="Email"
+                class="w-full bg-transparent outline-none text-sm"
+                required
+              />
+            </div>
+
+            <!-- Password -->
+            <div
+              class="flex items-center border bg-gray-50 rounded-lg px-3 py-3"
+            >
+              <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                <svg
+                  class="h-5 w-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-width="2"
+                    d="M12 11c0-1.1.9-2 2-2h4a2 2 0 012 2v6a2 2 0 01-2 2h-4a2 2 0 01-2-2v-6z"
+                  />
+                  <path stroke-width="2" d="M6 11V7a6 6 0 0112 0v4" />
+                </svg>
+              </div>
+              <input
+                type="password"
+                id="dRegPass"
+                placeholder="Password"
+                class="w-full bg-transparent outline-none text-sm"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- ✅ PHONE + GST -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Phone -->
+            <div
+              class="flex items-center border bg-gray-50 rounded-lg px-3 py-3"
+            >
+              <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                <svg
+                  class="h-5 w-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-width="2"
+                    d="M3 5a2 2 0 012-2h3l2 5-2 2a11 11 0 005 5l2-2 5 2v3a2 2 0 01-2 2A16 16 0 013 5z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="tel"
+                id="dRegPhone"
+                name="phoneNumber"
+                placeholder="Phone Number"
+                class="w-full bg-transparent outline-none text-sm"
+                required
+                pattern="^[0-9]{10}$"
+                maxlength="10"
+                inputmode="numeric"
+                title="Invalid phone number. Must be a 10-digit number starting with 0-9"
+              />
+            </div>
+
+            <!-- GST -->
+            <div
+              class="flex items-center border bg-gray-50 rounded-lg px-3 py-3"
+            >
+              <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+                <svg
+                  class="h-5 w-5 text-indigo-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-width="2" d="M4 4h16v16H4z" />
+                  <path stroke-width="2" d="M8 8h8M8 12h8M8 16h8" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="dRegGst"
+                placeholder="GST Number"
+                class="w-full bg-transparent outline-none text-sm uppercase"
+                required
+              />
+            </div>
+          </div>
+
+          <!-- ✅ SHOP NAME -->
+          <div class="flex items-center border bg-gray-50 rounded-lg px-3 py-3">
+            <div class="bg-indigo-100 p-2 rounded-lg mr-3">
+              <svg
+                class="h-5 w-5 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-width="2" d="M3 9l1-5h16l1 5M5 9v10h14V9" />
+              </svg>
+            </div>
             <input
               type="text"
               id="dRegShop"
               placeholder="Shop Name"
-              class="col-span-2 border p-2 rounded text-sm"
-              required
-            />
-            <input
-              type="text"
-              id="dRegAddr"
-              placeholder="Shop Address"
-              class="col-span-2 border p-2 rounded text-sm"
+              class="w-full bg-transparent outline-none text-sm"
               required
             />
           </div>
+
+          <!-- ✅ SHOP ADDRESS -->
+          <div class="flex items-start border bg-gray-50 rounded-lg px-3 py-3">
+            <div class="bg-indigo-100 p-2 rounded-lg mr-3 mt-1">
+              <svg
+                class="h-5 w-5 text-indigo-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-width="2"
+                  d="M12 11c1.7 0 3-1.3 3-3a3 3 0 10-6 0c0 1.7 1.3 3 3 3z"
+                />
+                <path
+                  stroke-width="2"
+                  d="M12 2C7 2 4 6 4 10c0 5 8 12 8 12s8-7 8-12c0-4-3-8-8-8z"
+                />
+              </svg>
+            </div>
+            <textarea
+              id="dRegAddr"
+              placeholder="Shop Address"
+              rows="3"
+              class="w-full bg-transparent outline-none text-sm resize-none"
+              required
+            ></textarea>
+          </div>
+
+          <!-- ✅ TERMS -->
+          <label class="flex items-start gap-2 text-sm text-gray-600">
+            <input type="checkbox" id="termsCheckbox" required class="mt-1" />
+            <span>
+              I agree to the
+              <button
+                type="button"
+                onclick="openTermsModal()"
+                class="text-indigo-600 font-semibold hover:underline"
+              >
+                terms and conditions
+              </button>
+            </span>
+          </label>
+
+          <!-- ✅ SUBMIT -->
           <button
             type="submit"
-            class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg"
+            class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition"
           >
-            Create Account
+            <svg
+              class="h-5 w-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-width="2" d="M16 21v-2a4 4 0 00-8 0v2" />
+              <circle cx="12" cy="7" r="4" stroke-width="2" />
+            </svg>
+            Create Dealer Account
           </button>
-          <button
-            type="button"
-            onclick="toggleAuthMode(false)"
-            class="w-full text-gray-500 text-xs hover:underline"
-          >
-            Back to Login
-          </button>
+
+          <!-- ✅ DIVIDER -->
+          <div class="flex items-center gap-3 my-4">
+            <div class="flex-1 border-t"></div>
+            <span class="text-xs text-gray-400">or</span>
+            <div class="flex-1 border-t"></div>
+          </div>
+
+          <!-- ✅ LOGIN LINK -->
+          <p class="text-center text-sm text-gray-600">
+            Already have an account?
+            <button
+              type="button"
+              onclick="toggleAuthMode(false)"
+              class="text-indigo-600 font-bold hover:underline"
+            >
+              Login
+            </button>
+          </p>
+
+          <!-- ✅ SECURITY INFO -->
+          <div class="mt-4 flex items-start gap-3 bg-indigo-50 p-3 rounded-xl">
+            <svg
+              class="h-6 w-6 text-indigo-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-width="2"
+                d="M12 2l7 4v6c0 5-3.5 9.74-7 10-3.5-.26-7-5-7-10V6l7-4z"
+              />
+            </svg>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">
+                Secure. Reliable. Built for Pawn Businesses.
+              </p>
+              <p class="text-xs text-gray-500">
+                Aadhaar verified. Data protected. Business connected.
+              </p>
+            </div>
+          </div>
         </form>
+
+        <!-- Toast and WhatsApp button -->
+        <div
+          id="toast"
+          class="fixed bottom-6 right-6 hidden bg-green-600 text-white px-4 py-3 rounded shadow-lg z-50"
+        ></div>
+        <!-- <a
+          id="waButton"
+          class="hidden fixed bottom-6 right-6 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-full shadow-lg z-50 flex items-center gap-2"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Message on WhatsApp"
+        > -->
+        <!-- <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M20.52 3.478A11.943 11.943 0 0012 0C5.373 0 .01 5.373.01 12.001c0 2.115.55 4.16 1.59 5.98L0 24l5.31-1.38A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12 0-3.197-1.246-6.197-3.48-8.522z"
+              fill="#25D366"
+            />
+            <path
+              d="M17.46 14.28c-.28-.14-1.66-.82-1.92-.92-.26-.1-.45-.14-.64.14-.18.28-.7.92-.86 1.11-.16.18-.31.2-.59.07-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.31.42-.47.14-.16.18-.28.28-.46.09-.18.04-.34-.02-.47-.07-.14-.64-1.54-.88-2.12-.23-.56-.47-.48-.64-.49l-.55-.01c-.18 0-.47.07-.72.34-.26.28-1 1-1 2.44s1.03 2.83 1.17 3.03c.14.18 2.03 3.1 4.92 4.35 1.64.7 2.32.78 3.15.66.51-.07 1.66-.68 1.9-1.34.24-.66.24-1.22.17-1.34-.07-.12-.26-.18-.55-.31z"
+              fill="#fff"
+            />
+          </svg> -->
+        <!-- <span class="text-sm font-medium">Message</span> 
+        </a>-->
       </section>
 
       <section id="dealerListView" class="hidden">
         <h2 class="text-2xl font-bold text-gray-800 mb-6">Manage Dealers</h2>
         <div
-          class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+          class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-x-auto"
         >
-          <table class="w-full text-left">
+          <table class="w-full min-w-[700px] text-left">
             <thead class="bg-gray-50 border-b">
               <tr>
                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">
-                  Shop
+                  Shop Name
                 </th>
                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">
-                  GST
+                  GST Number
                 </th>
                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">
-                  Phone
+                  Phone Number
                 </th>
                 <th class="p-4 text-xs font-bold text-gray-500 uppercase">
                   Status
@@ -304,96 +785,35 @@
               </svg>
             </button>
           </div>
-          <div
-            class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 gap-3"
-          >
+          <div class="flex flex-col md:flex-row gap-2">
             <input
               type="text"
               id="searchAadhaar"
               maxlength="12"
               placeholder="12-digit Aadhaar"
-              class="flex-1 border p-3 rounded-lg font-mono outline-none focus:ring-2 focus:ring-indigo-500"
-              aria-describedby="searchHint"
+              class="flex-1 border p-3 rounded-lg font-mono focus:ring-2 focus:ring-indigo-500 outline-none"
             />
             <button
-              id="searchButton"
               onclick="handleSearch()"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-bold transition disabled:opacity-50"
-              disabled
+              class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-lg font-bold transition"
             >
               Search
             </button>
           </div>
-          <p id="searchHint" class="text-xs text-gray-200 mt-2">
-            Enter a 12-digit Aadhaar number to search for a customer or register
-            a new one.
-          </p>
-        </div>
-
-        <div
-          id="reviewSection"
-          class="hidden bg-white p-8 rounded-xl shadow-lg border-t-4 border-red-500"
-        >
-          <div class="flex justify-between items-start mb-6">
-            <div>
-              <h3 class="text-2xl font-bold" id="customerDisplayName">
-                Customer Info
-              </h3>
-              <p
-                id="customerAadhaarDisplay"
-                class="text-gray-500 font-mono text-sm mt-1"
-              ></p>
-            </div>
-            <span
-              class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-[10px] font-bold uppercase"
-              >Verified Profile</span
-            >
-          </div>
-          <div
-            id="reviewHistory"
-            class="mb-8 space-y-4 max-h-60 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-100"
-          ></div>
-
-          <form id="reviewForm" class="space-y-4 border-t pt-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <select
-                id="revType"
-                class="border p-3 rounded-lg bg-white font-bold outline-none"
-              >
-                <option value="SAFE">Safe</option>
-                <option value="MEDIUM_RISK">Low Risk</option>
-                <option value="HIGH_RISK">High Risk</option>
-              </select>
-              <textarea
-                id="revComment"
-                class="md:col-span-3 border p-3 rounded-lg outline-none"
-                placeholder="Provide details for this review..."
-                required
-              ></textarea>
-            </div>
-            <div class="md:col-span-4 flex justify-center">
-              <button
-                type="submit"
-                class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded-lg font-bold transition"
-              >
-                Submit Review
-              </button>
-            </div>
-          </form>
         </div>
 
         <div
           id="registrationSection"
-          class="hidden bg-white p-8 rounded-xl shadow-lg border-t-4 border-yellow-500"
+          class="bg-white p-6 rounded-xl shadow-md border-t-4 border-indigo-600"
         >
-          <h3 class="text-xl font-bold mb-4 text-yellow-700">
+          <h3 class="text-xl font-bold mb-4 text-gray-700">
             Register New Customer
           </h3>
           <form id="regForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               type="text"
               id="regName"
-              placeholder="Full Name"
+              placeholder="Full Name as pre Aadhaar"
               class="border p-3 rounded-lg"
               required
             />
@@ -406,38 +826,332 @@
             <input
               type="tel"
               id="regPhone"
+              name="phoneNumber"
               placeholder="Phone Number"
-              class="border p-3 rounded-lg"
+              class="border p-3 rounded-lg w-full"
               required
+              pattern="^[0-9]{10}$"
+              maxlength="10"
+              inputmode="numeric"
+              title="Invalid phone number. Must be a 10-digit number starting with 0-9"
             />
             <input
               type="text"
-              id="regAddress"
+              id="customerAddress"
+              name="customerAddress"
               placeholder="Customer Address"
               class="border p-3 rounded-lg"
               required
             />
             <button
               type="submit"
-              class="md:col-span-2 bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-bold"
+              class="md:col-span-2 bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition"
             >
               Register Customer
             </button>
           </form>
         </div>
+
+        <div
+          id="reviewSection"
+          class="hidden bg-white p-8 rounded-xl shadow-lg border-t-4 border-indigo-500"
+        >
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h3 class="text-2xl font-bold" id="customerDisplayName">
+                Customer Info
+              </h3>
+              <p
+                id="customerAadhaarDisplay"
+                class="text-gray-500 font-mono text-sm mt-1"
+              ></p>
+            </div>
+            <span
+              id="customerNameBadge"
+              class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-[10px] font-bold uppercase"
+              >Verified Profile</span
+            >
+          </div>
+
+          <div
+            id="reviewHistory"
+            class="mb-8 space-y-4 max-h-60 overflow-y-auto p-4 bg-gray-50 rounded-lg border border-gray-100"
+          ></div>
+
+          <form id="reviewForm" class="space-y-6 border-t pt-6">
+            <!-- Add Review Card -->
+            <div class="bg-gray-50 border border-gray-200 rounded-xl p-5">
+              <!-- Risk Level -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Review Risk Level
+                </label>
+
+                <div class="flex gap-3">
+                  <!-- ✅ SAFE -->
+                  <div>
+                    <input
+                      type="radio"
+                      id="rev_safe"
+                      name="revType"
+                      value="SAFE"
+                      class="peer sr-only"
+                    />
+                    <label
+                      for="rev_safe"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer border-green-300 text-green-700 font-semibold bg-white transition peer-checked:bg-green-200 peer-checked:border-green-700 peer-checked:shadow-md"
+                    >
+                      ✅ Safe
+                    </label>
+                  </div>
+
+                  <!-- ✅ LOW RISK -->
+                  <div>
+                    <input
+                      type="radio"
+                      id="rev_medium"
+                      name="revType"
+                      value="MEDIUM_RISK"
+                      class="peer sr-only"
+                    />
+                    <label
+                      for="rev_medium"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer border-yellow-300 text-yellow-700 font-semibold bg-white transition peer-checked:bg-yellow-200 peer-checked:border-yellow-700 peer-checked:shadow-md"
+                    >
+                      ⚠️ Low Risk
+                    </label>
+                  </div>
+
+                  <!-- ✅ HIGH RISK -->
+                  <div>
+                    <input
+                      type="radio"
+                      id="rev_high"
+                      name="revType"
+                      value="HIGH_RISK"
+                      class="peer sr-only"
+                    />
+                    <label
+                      for="rev_high"
+                      class="flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer border-red-300 text-red-700 font-semibold bg-white transition peer-checked:bg-red-200 peer-checked:border-red-700 peer-checked:shadow-md"
+                    >
+                      🚨 High Risk
+                    </label>
+                  </div>
+                </div>
+
+                <!-- ✅ Inline Error -->
+                <p
+                  id="riskError"
+                  class="hidden mt-2 text-sm text-red-600 font-medium"
+                >
+                  Please select a Review Risk Level.
+                </p>
+              </div>
+              <!-- Comment -->
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                  Review Details
+                </label>
+
+                <textarea
+                  id="revComment"
+                  required
+                  rows="4"
+                  placeholder="Provide details for this review..."
+                  class="w-full resize-none bg-white border border-gray-300 px-4 py-3 rounded-lg text-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                ></textarea>
+              </div>
+            </div>
+
+            <!-- Submit -->
+            <button
+              type="submit"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg font-bold transition"
+            >
+              Submit Review
+            </button>
+          </form>
+        </div>
       </section>
     </main>
+
+    <footer
+      class="bg-gradient-to-r from-indigo-800 via-purple-700 to-blue-800 text-indigo-100"
+    >
+      <div class="max-w-5xl mx-auto px-4 py-6">
+        <!-- Links -->
+        <div class="flex justify-center items-center gap-4 text-xs mb-3">
+          <button
+            onclick="openTermsModal()"
+            class="hover:text-white transition"
+          >
+            Terms & Conditions
+          </button>
+
+          <span class="opacity-40">|</span>
+
+          <button
+            onclick="alert('Privacy Policy coming soon')"
+            class="hover:text-white transition"
+          >
+            Privacy Policy
+          </button>
+        </div>
+
+        <!-- Copyright -->
+        <p class="text-center text-[11px] text-indigo-200">
+          © <span id="year"></span> PawnSecure. All rights reserved.
+        </p>
+
+        <!-- Tagline -->
+        <p class="text-center text-[10px] text-indigo-300 mt-1">
+          Trusted Records • Secure Connections
+        </p>
+      </div>
+    </footer>
+
+    <div
+      id="resetModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-xl p-6 w-[360px] shadow-2xl">
+        <h2 class="text-xl font-bold mb-3">Reset Password</h2>
+
+        <input
+          id="resetToken"
+          type="text"
+          readonly
+          class="w-full border p-3 rounded-lg mb-3 bg-gray-100"
+        />
+
+        <input
+          id="newPassword"
+          type="password"
+          placeholder="New Password"
+          class="w-full border p-3 rounded-lg mb-4"
+        />
+
+        <div class="flex justify-end gap-3">
+          <button
+            onclick="closeResetPassword()"
+            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+
+          <button
+            onclick="resetPassword()"
+            class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold"
+          >
+            Reset Password
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="forgotModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-xl p-6 w-[360px] shadow-2xl">
+        <h2 class="text-xl font-bold mb-2">Forgot Password</h2>
+        <p class="text-sm text-gray-600 mb-4">
+          Enter your registered email to receive reset instructions
+        </p>
+
+        <input
+          id="forgotEmail"
+          type="email"
+          placeholder="Enter email"
+          class="w-full border p-3 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 outline-none"
+        />
+
+        <div class="flex justify-end gap-3">
+          <button
+            onclick="closeForgotPassword()"
+            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+
+          <button
+            onclick="sendForgotPassword()"
+            class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+          >
+            Send Link
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="resetModal"
+      class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-xl p-6 w-[360px] shadow-2xl">
+        <h2 class="text-xl font-bold mb-2">Reset Password</h2>
+
+        <input
+          id="resetToken"
+          type="text"
+          placeholder="Reset Token / OTP"
+          class="w-full border p-3 rounded-lg mb-3"
+        />
+
+        <input
+          id="newPassword"
+          type="password"
+          placeholder="New Password"
+          class="w-full border p-3 rounded-lg mb-4"
+        />
+
+        <div class="flex justify-end gap-3">
+          <button
+            onclick="closeResetPassword()"
+            class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+
+          <button
+            onclick="resetPassword()"
+            class="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold"
+          >
+            Reset Password
+          </button>
+        </div>
+      </div>
+    </div>
+
     <script>
-      const API_BASE = "http://localhost:8080/api";
+      // Auto update year
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+
+    <script>
+      const API_BASE = window.APP_CONFIG.API_BASE;
       let activeCustomerId = null;
-      let rawSearchValue = "";
-      let toastTimeout = null;
+      let rawSearchValue = ""; // Store actual digits for API calls
+
+      // Masking Utility
+      const maskAadhaar = (val) =>
+        val && val.length === 12 ? `XXXX-XXXX-${val.slice(-4)}` : val;
+
+      // Aadhaar Search Field Logic
+      const searchInput = document.getElementById("searchAadhaar");
+
+      searchInput.onfocus = () => {
+        searchInput.value = rawSearchValue; // Reveal digits for editing
+      };
 
       function openAadhaarPortalWindow() {
+        // Defines the size and position of the popup
         const width = 600;
         const height = 800;
         const left = window.innerWidth / 2 - width / 2;
         const top = window.innerHeight / 2 - height / 2;
+
         window.open(
           "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar/en",
           "UIDAIPortal",
@@ -445,96 +1159,117 @@
         );
       }
 
-      function openAadhaarModal() {
-        const modal = document.getElementById("aadhaarModal");
-        const iframe = document.getElementById("aadhaarFrame");
-        iframe.src = "https://myaadhaar.uidai.gov.in/genricDownloadAadhaar/en";
-        modal.classList.remove("hidden");
-        document.body.style.overflow = "hidden";
-      }
-
-      function closeAadhaarModal() {
-        document.getElementById("aadhaarModal").classList.add("hidden");
-        document.getElementById("aadhaarFrame").src = "";
-        document.body.style.overflow = "auto";
-      }
-
-      function showMessage(message, type = "info") {
-        const banner = document.getElementById("statusBanner");
-        const colorClass =
-          type === "success"
-            ? "bg-green-600 text-white"
-            : type === "error"
-              ? "bg-red-600 text-white"
-              : type === "warning"
-                ? "bg-yellow-500 text-gray-900"
-                : "bg-indigo-600 text-white";
-        banner.className = `fixed bottom-6 left-1/2 z-50 -translate-x-1/2 max-w-sm w-full rounded-xl p-4 shadow-xl pointer-events-auto transition-all duration-300 ${colorClass}`;
-        banner.innerText = message;
-        banner.style.opacity = "1";
-        clearTimeout(toastTimeout);
-        toastTimeout = setTimeout(() => {
-          banner.style.opacity = "0";
-        }, 3200);
-      }
-
-      function toggleMobileMenu() {
-        const navLinks = document.getElementById("navLinks");
-        navLinks.classList.toggle("hidden");
-      }
-
-      function setButtonLoading(button, loading, label) {
-        if (!button) return;
-        button.disabled = loading;
-        if (loading) {
-          button.dataset.originalText = button.innerHTML;
-          button.innerHTML =
-            '<span class="inline-flex items-center gap-2"><svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path></svg>' +
-            label +
-            "</span>";
-        } else {
-          button.innerHTML = button.dataset.originalText || label;
+      searchInput.onblur = () => {
+        rawSearchValue = searchInput.value.replace(/\D/g, ""); // Save only digits
+        if (rawSearchValue.length === 12) {
+          searchInput.value = maskAadhaar(rawSearchValue); // Mask visually
         }
-      }
+      };
+
+      searchInput.oninput = (e) => {
+        searchInput.value = searchInput.value.replace(/\D/g, "");
+        rawSearchValue = searchInput.value;
+      };
 
       const PawnSecure = {
         getHeaders: () => ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("ps_token")}`,
         }),
+
         async handle(res) {
-          const ct = res.headers.get("content-type");
+          const contentType = res.headers.get("content-type");
           let data =
-            ct && ct.includes("application/json")
+            contentType && contentType.includes("application/json")
               ? await res.json()
               : await res.text();
-          if (!res.ok) throw new Error(data.message || data || "Action Failed");
+          if (!res.ok)
+            throw new Error(
+              data && data.message ? data.message : data || "Action Failed",
+            );
           return data;
         },
+
         async login(creds) {
           const res = await fetch(`${API_BASE}/auth/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(creds),
           });
-          const result = await this.handle(res);
-          const role = this.parseJwt(result).role || "ROLE_USER";
-          return { token: result, role: role };
+          if (res.ok) {
+            const result = await this.handle(res);
+            return typeof result === "string"
+              ? { token: result, role: this.parseJwtRole(result) }
+              : result;
+          }
+          // read server message (if any) and throw structured error for caller to handle
+          let text = "";
+          try {
+            text = await res.text();
+          } catch (e) {
+            text = res.statusText || "Authentication failed";
+          }
+          // try to parse JSON body message
+          try {
+            const j = JSON.parse(text);
+            if (j && j.message) text = j.message;
+          } catch (e) {
+            /* ignore */
+          }
+          throw {
+            status: res.status,
+            message: text || "Authentication failed",
+          };
         },
-        parseJwt(token) {
+
+        async registerDealer(data) {
+          const res = await fetch(`${API_BASE}/auth/register`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          return this.handle(res);
+        },
+
+        parseJwtRole(token) {
+          try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            return payload.role || payload.roles || "ROLE_USER";
+          } catch (e) {
+            return "ROLE_USER";
+          }
+        },
+        parseJwtPayload(token) {
           try {
             return JSON.parse(atob(token.split(".")[1]));
           } catch (e) {
             return {};
           }
         },
+
         async fetchDealers() {
-          return this.handle(
-            await fetch(`${API_BASE}/admin/dealers`, {
-              headers: this.getHeaders(),
-            }),
-          );
+          const res = await fetch(`${API_BASE}/admin/dealers`, {
+            headers: this.getHeaders(),
+          });
+          return this.handle(res);
         },
+
+        async approveDealer(id) {
+          const res = await fetch(`${API_BASE}/admin/approve/${id}`, {
+            method: "PATCH",
+            headers: this.getHeaders(),
+          });
+          return this.handle(res);
+        },
+
+        async renewDealer(id) {
+          const res = await fetch(`${API_BASE}/admin/renew/${id}`, {
+            method: "PATCH",
+            headers: this.getHeaders(),
+          });
+          return this.handle(res);
+        },
+
         async searchCustomer(aadhaar) {
           const res = await fetch(
             `${API_BASE}/customers/search?aadhaar=${aadhaar}`,
@@ -542,317 +1277,1678 @@
           );
           return res.status === 404 ? null : this.handle(res);
         },
+
         async addCustomer(data) {
-          return this.handle(
-            await fetch(`${API_BASE}/customers`, {
-              method: "POST",
-              headers: this.getHeaders(),
-              body: JSON.stringify(data),
-            }),
-          );
+          const res = await fetch(`${API_BASE}/customers`, {
+            method: "POST",
+            headers: this.getHeaders(),
+            body: JSON.stringify(data),
+          });
+
+          const text = await res.text();
+
+          if (!res.ok) {
+            throw new Error(text || "Failed to register customer");
+          }
+
+          return {
+            message: text,
+          };
         },
+
         async postReview(data) {
-          return this.handle(
-            await fetch(`${API_BASE}/reviews`, {
-              method: "POST",
-              headers: this.getHeaders(),
-              body: JSON.stringify(data),
-            }),
-          );
+          const res = await fetch(`${API_BASE}/reviews`, {
+            method: "POST",
+            headers: this.getHeaders(),
+            body: JSON.stringify(data),
+          });
+          return this.handle(res);
         },
         async deleteReview(id) {
-          return this.handle(
-            await fetch(`${API_BASE}/reviews/${id}`, {
-              method: "DELETE",
-              headers: this.getHeaders(),
-            }),
-          );
+          const res = await fetch(`${API_BASE}/reviews/${id}`, {
+            method: "DELETE",
+            headers: this.getHeaders(),
+          });
+          return this.handle(res);
         },
       };
 
-      const normalizeId = (value) => {
-        if (value == null) return null;
-        if (typeof value === "object")
-          return normalizeId(
-            value.id ||
-              value.userId ||
-              value._id ||
-              value.uid ||
-              value.dealerId ||
-              value.reviewerId ||
-              value.sub,
-          );
-        return String(value).trim();
+      function showView(viewId) {
+        document
+          .querySelectorAll("section")
+          .forEach((s) => s.classList.add("hidden"));
+        document.getElementById(viewId + "View").classList.remove("hidden");
+      }
+
+      // toggleAuthMode already uses this pattern
+      function toggleAuthMode(isRegister) {
+        const loginForm = document.getElementById("loginForm");
+        const dealerForm = document.getElementById("dealerRegForm");
+
+        loginForm.classList.toggle("hidden", isRegister);
+        dealerForm.classList.toggle("hidden", !isRegister);
+      }
+
+      document.getElementById("loginForm").onsubmit = async (e) => {
+        e.preventDefault();
+        try {
+          const res = await PawnSecure.login({
+            email: loginEmail.value,
+            password: loginPass.value,
+          });
+          localStorage.setItem("ps_token", res.token);
+          localStorage.setItem("ps_role", res.role);
+          // Store user info from token payload
+          try {
+            const payload = PawnSecure.parseJwtPayload(res.token) || {};
+            localStorage.setItem("ps_user", JSON.stringify(payload));
+            const gst = (
+              payload.gstNumber ||
+              payload.gstin ||
+              payload.gst ||
+              payload.shopGst ||
+              payload.gstNo ||
+              payload.gst_no ||
+              ""
+            ).toString();
+
+            if (gst) {
+              localStorage.setItem("ps_gst", gst.toUpperCase());
+            }
+            // Email
+            let email = (
+              payload.email ||
+              payload.emailAddress ||
+              payload.username ||
+              payload.user ||
+              payload.mail ||
+              ""
+            ).toString();
+
+            if (
+              !email &&
+              payload.sub &&
+              typeof payload.sub === "string" &&
+              payload.sub.indexOf("@") !== -1
+            ) {
+              email = payload.sub;
+            }
+
+            if (email) {
+              localStorage.setItem("ps_email", email.toLowerCase());
+            }
+            // Name
+            let name = (
+              payload.name ||
+              payload.fullName ||
+              payload.shopName ||
+              payload.dealerName ||
+              payload.username ||
+              ""
+            ).toString();
+
+            if (!name && email) {
+              const local = email.split("@")[0] || "";
+
+              name = local
+                .replace(/[._\-]/g, " ")
+                .split(" ")
+                .map((s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : ""))
+                .join(" ")
+                .trim();
+            }
+
+            if (name) {
+              localStorage.setItem("ps_name", name.trim().toLowerCase());
+            }
+          } catch (err) {
+            // non-fatal
+          }
+
+          // Success Popup
+          const successPopup = document.createElement("div");
+
+          successPopup.innerHTML = `
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                    <div class="text-green-600 text-5xl mb-3">✔</div>
+
+                    <h2 class="text-xl font-bold mb-2">
+                        Welcome Back!
+                    </h2>
+
+                    <p class="text-gray-600 mb-2">
+                        Redirecting...
+                    </p>
+
+                </div>
+
+            </div>
+        `;
+
+          document.body.appendChild(successPopup);
+
+          // Auto close popup after 1.5 seconds
+          setTimeout(() => {
+            successPopup.remove();
+
+            try {
+              location.reload();
+            } catch (e) {}
+          }, 1500);
+        } catch (err) {
+          const status = err && err.status ? err.status : null;
+
+          const message =
+            err && err.message
+              ? err.message
+              : err && err.toString
+                ? err.toString()
+                : "Login failed";
+
+          // Account not found
+          if (
+            status === 404 ||
+            (typeof message === "string" &&
+              message.toLowerCase().includes("register"))
+          ) {
+            const errorPopup = document.createElement("div");
+
+            errorPopup.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                    <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                        <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                        <h2 class="text-xl font-bold mb-2">
+                            Account Not Found
+                        </h2>
+
+                        <p class="text-gray-600 mb-5">
+                            ${message}
+                        </p>
+
+                        <div class="flex justify-center gap-3">
+
+                            <button id="registerNowBtn"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+                                Register Now
+                            </button>
+
+                            <button id="closeErrorBtn"
+                                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg">
+                                Close
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            document.body.appendChild(errorPopup);
+
+            document.getElementById("registerNowBtn").onclick = () => {
+              errorPopup.remove();
+
+              toggleAuthMode(true);
+            };
+
+            document.getElementById("closeErrorBtn").onclick = () => {
+              errorPopup.remove();
+            };
+          }
+
+          // Pending account
+          else if (
+            status === 403 ||
+            (typeof message === "string" &&
+              message.toLowerCase().includes("await"))
+          ) {
+            notify(message, "info");
+          }
+
+          // Invalid credentials
+          else if (
+            status === 401 ||
+            (typeof message === "string" &&
+              message.toLowerCase().includes("invalid"))
+          ) {
+            const errorPopup = document.createElement("div");
+
+            errorPopup.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                    <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                        <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                        <h2 class="text-xl font-bold mb-2">
+                            Invalid Credentials
+                        </h2>
+
+                        <p class="text-gray-600 mb-5">
+                            ${message}
+                        </p>
+
+                        <div class="flex justify-center gap-3">
+
+                            <button id="forgotPwdBtn" type="button" onclick="openForgotPassword()"
+                                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg">
+                                Forgot Password
+                            </button>
+
+                            <button id="invalidOkBtn"
+                                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                                OK
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+
+            document.body.appendChild(errorPopup);
+
+            document.getElementById("forgotPwdBtn").onclick = () => {
+              errorPopup.remove();
+
+              try {
+                const p = document.getElementById("loginPass");
+
+                if (p) {
+                  p.value = "";
+                  p.focus();
+                }
+              } catch (e) {}
+            };
+
+            document.getElementById("invalidOkBtn").onclick = () => {
+              errorPopup.remove();
+            };
+          }
+
+          // Generic error
+          else {
+            notify(message, "error");
+          }
+        }
       };
 
-      const getMyId = () => {
-        const token = localStorage.getItem("ps_token");
-        if (!token) return null;
-        const payload = PawnSecure.parseJwt(token);
-        return normalizeId(
-          payload.userId ||
-            payload.id ||
-            payload.sub ||
-            payload.uid ||
-            payload.dealerId ||
-            payload.user ||
-            payload.dealer,
-        );
-      };
+      const dealerForm = document.getElementById("dealerRegForm");
+      const submitBtn =
+        document.querySelector('#dealerRegForm button[type="submit"]') || null;
 
-      const getReviewOwnerId = (rev) => {
-        if (!rev) return null;
-        return normalizeId(
-          rev.dealerId ||
-            rev.ownerId ||
-            rev.createdBy ||
-            rev.createdBy?.id ||
-            rev.createdBy?.userId ||
-            rev.reviewerId ||
-            rev.reviewer ||
-            rev.reviewer?.id ||
-            rev.reviewer?.userId ||
-            rev.dealer,
+      // Helper: create toast + wa button if missing
+      function ensureToastElements() {
+        let toast = document.getElementById("toast");
+        let waBtn = document.getElementById("waButton");
+
+        if (!toast) {
+          toast = document.createElement("div");
+          toast.id = "toast";
+          toast.style.cssText =
+            "position:fixed;bottom:1.5rem;right:1.5rem;display:none;background:#16a34a;color:#fff;padding:0.75rem 1rem;border-radius:0.5rem;box-shadow:0 6px 18px rgba(0,0,0,0.15);z-index:9999;";
+          document.body.appendChild(toast);
+        }
+
+        if (!waBtn) {
+          waBtn = document.createElement("a");
+          waBtn.id = "waButton";
+          waBtn.target = "_blank";
+          waBtn.rel = "noopener noreferrer";
+          waBtn.textContent = "Message on WhatsApp";
+          waBtn.style.cssText =
+            "margin-left:0.75rem;background:#25D366;color:#fff;padding:0.35rem 0.6rem;border-radius:0.375rem;text-decoration:none;font-weight:600;";
+          toast.appendChild(waBtn);
+        }
+
+        return { toast, waBtn };
+      }
+
+      // Note: unified notifications use `notify()` which appends to #toastContainer.
+      // The legacy `showToast` helper was removed to avoid duplication.
+
+      // When submitting dealer registration, confirm first. Cancel will keep user on the form.
+      dealerForm.onsubmit = function (e) {
+        e.preventDefault();
+
+        // HTML5 validation
+        if (!dealerForm.checkValidity()) {
+          dealerForm.reportValidity();
+          return;
+        }
+
+        // collect and normalize values (do not send to server yet)
+        const payload = {
+          name: document.getElementById("dRegName").value.trim(),
+          email: document.getElementById("dRegEmail").value.trim(),
+          password: document.getElementById("dRegPass").value,
+          phoneNumber: document.getElementById("dRegPhone").value.trim(),
+          gstNumber: document
+            .getElementById("dRegGst")
+            .value.trim()
+            .toUpperCase(),
+          shopName: document.getElementById("dRegShop").value.trim(),
+          shopAddress: document.getElementById("dRegAddr").value.trim(),
+        };
+
+        // Ask for confirmation first; Cancel will simply close the modal and keep the user on the registration form
+        askConfirm(
+          "Create Dealer Account?",
+          "Are you sure you want to submit this registration? The dealer will be added and await admin approval.",
+          async () => {
+            if (submitBtn) submitBtn.disabled = true;
+            try {
+              await PawnSecure.registerDealer(payload);
+
+              // prepare WhatsApp link (international format without plus)
+              const waNumber = 918290818133;
+              const waGroupLink =
+                "https://chat.whatsapp.com/G1U849zmSbe3baXsZmmYp";
+              const waText = encodeURIComponent(
+                "Hello, I have registered and am awaiting approval.",
+              );
+              const { toast, waBtn } = ensureToastElements();
+
+              waBtn.href = `https://wa.me/${waNumber}?text=${waText}`;
+              waBtn.style.display = "inline-block";
+
+              const html = `<div>Awaiting Admin Approval.</div><div style="margin-top:12px"><a href="${waBtn.href}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-full"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M20.52 3.478A11.943 11.943 0 0012 0C5.373 0 .01 5.373.01 12.001c0 2.115.55 4.16 1.59 5.98L0 24l5.31-1.38A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12 0-3.197-1.246-6.197-3.48-8.522z" fill="#25D366"/><path d="M17.46 14.28c-.28-.14-1.66-.82-1.92-.92-.26-.1-.45-.14-.64.14-.18.28-.7.92-.86 1.11-.16.18-.31.2-.59.07-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.31.42-.47.14-.16.18-.28.28-.46.09-.18.04-.34-.02-.47-.07-.14-.64-1.54-.88-2.12-.23-.56-.47-.48-.64-.49l-.55-.01c-.18 0-.47.07-.72.34-.26.28-1 1-1 2.44s1.03 2.83 1.17 3.03c.14.18 2.03 3.1 4.92 4.35 1.64.7 2.32.78 3.15.66.51-.07 1.66-.68 1.9-1.34.24-.66.24-1.22.17-1.34-.07-.12-.26-.18-.55-.31z" fill="#fff"/></svg><span>WhatsApp</span></a></div>`;
+
+              const successPopup = document.createElement("div");
+
+              successPopup.innerHTML = `
+  <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+    <div class="bg-white rounded-xl p-6 w-[380px] shadow-2xl text-center">
+
+      <div class="text-green-600 text-5xl mb-3">✔</div>
+
+      <h2 class="text-xl font-bold mb-2">
+        Registration Successful
+      </h2>
+
+      <div class="text-gray-600 mb-5">
+        <div>Awaiting Admin Approval.</div>
+
+        <div class="mt-4 flex flex-col gap-3 items-center">
+
+          <!-- ✅ Direct WhatsApp (already working) -->
+          <a href="${waBtn.href}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-full">
+
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.52 3.478A11.943 11.943 0 0012 0C5.373 0 .01 5.373.01 12.001
+                       c0 2.115.55 4.16 1.59 5.98L0 24l5.31-1.38A11.933 11.933 0 0012 24
+                       c6.627 0 12-5.373 12-12
+                       0-3.197-1.246-6.197-3.48-8.522z"
+                    fill="#25D366"/>
+              <path d="M17.46 14.28c-.28-.14-1.66-.82-1.92-.92
+                       -.26-.1-.45-.14-.64.14
+                       -.18.28-.7.92-.86 1.11
+                       -.16.18-.31.2-.59.07
+                       -.28-.14-1.18-.43-2.25-1.38
+                       -.83-.74-1.39-1.66-1.55-1.94
+                       -.16-.28-.02-.43.12-.57
+                       .12-.12.28-.31.42-.47
+                       .14-.16.18-.28.28-.46
+                       .09-.18.04-.34-.02-.47
+                       -.07-.14-.64-1.54-.88-2.12
+                       -.23-.56-.47-.48-.64-.49
+                       l-.55-.01c-.18 0-.47.07-.72.34
+                       -.26.28-1 1-1 2.44
+                       s1.03 2.83 1.17 3.03
+                       c.14.18 2.03 3.1 4.92 4.35
+                       1.64.7 2.32.78 3.15.66
+                       .51-.07 1.66-.68 1.9-1.34
+                       .24-.66.24-1.22.17-1.34
+                       -.07-.12-.26-.18-.55-.31z"
+                    fill="#fff"/>
+            </svg>
+
+            WhatsApp Admin
+          </a>
+
+          <!-- ✅ WhatsApp Group (ICON ADDED ✅) -->
+          <a href="${waGroupLink}"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="inline-flex items-center gap-2 bg-green-100 hover:bg-green-200 text-green-700 px-4 py-2 rounded-full">
+
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.52 3.478A11.943 11.943 0 0012 0C5.373 0 .01 5.373.01 12.001
+                       c0 2.115.55 4.16 1.59 5.98L0 24l5.31-1.38A11.933 11.933 0 0012 24
+                       c6.627 0 12-5.373 12-12
+                       0-3.197-1.246-6.197-3.48-8.522z"
+                    fill="#25D366"/>
+              <path d="M17.46 14.28c-.28-.14-1.66-.82-1.92-.92
+                       -.26-.1-.45-.14-.64.14
+                       -.18.28-.7.92-.86 1.11
+                       -.16.18-.31.2-.59.07
+                       -.28-.14-1.18-.43-2.25-1.38
+                       -.83-.74-1.39-1.66-1.55-1.94
+                       -.16-.28-.02-.43.12-.57
+                       .12-.12.28-.31.42-.47
+                       .14-.16.18-.28.28-.46
+                       .09-.18.04-.34-.02-.47
+                       -.07-.14-.64-1.54-.88-2.12
+                       -.23-.56-.47-.48-.64-.49
+                       l-.55-.01c-.18 0-.47.07-.72.34
+                       -.26.28-1 1-1 2.44
+                       s1.03 2.83 1.17 3.03
+                       c.14.18 2.03 3.1 4.92 4.35
+                       1.64.7 2.32.78 3.15.66
+                       .51-.07 1.66-.68 1.9-1.34
+                       .24-.66.24-1.22.17-1.34
+                       -.07-.12-.26-.18-.55-.31z"
+                    fill="#fff"/>
+            </svg>
+
+            Join Admin WhatsApp Group
+          </a>
+
+        </div>
+      </div>
+
+      <button id="registerSuccessBtn"
+        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+        OK
+      </button>
+
+    </div>
+
+  </div>
+`;
+
+              document.body.appendChild(successPopup);
+
+              document.getElementById("registerSuccessBtn").onclick = () => {
+                successPopup.remove();
+
+                try {
+                  toggleAuthMode(false);
+                } catch (e) {}
+              };
+            } catch (err) {
+              const message =
+                err && err.message
+                  ? err.message
+                  : "Registration failed. Please try again.";
+              notify(message, "error");
+            } finally {
+              if (submitBtn) submitBtn.disabled = false;
+            }
+          },
         );
       };
 
       async function handleSearch() {
-        if (rawSearchValue.length !== 12)
-          return alert("Enter 12-digit Aadhaar");
+        const aadhaar = rawSearchValue;
+
+        if (aadhaar.length !== 12) {
+          const errorPopup = document.createElement("div");
+
+          errorPopup.innerHTML = `
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+            <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                <h2 class="text-xl font-bold mb-2">
+                    Invalid ID
+                </h2>
+
+                <p class="text-gray-600 mb-5">
+                    Please enter a valid 12-digit ID
+                </p>
+
+                <button id="aadhaarErrorBtn"
+                    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+                    OK
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+          document.body.appendChild(errorPopup);
+
+          document.getElementById("aadhaarErrorBtn").onclick = () => {
+            errorPopup.remove();
+          };
+
+          return;
+        }
+
         try {
-          const customer = await PawnSecure.searchCustomer(rawSearchValue);
+          const customer = await PawnSecure.searchCustomer(aadhaar);
           if (customer) {
             activeCustomerId = customer.id;
             document.getElementById("customerDisplayName").innerText =
               customer.name;
             document.getElementById("customerAadhaarDisplay").innerText =
-              `XXXX-XXXX-${rawSearchValue.slice(-4)}`;
-            const historyDiv = document.getElementById("reviewHistory");
-            const myId = getMyId();
+              maskAadhaar(aadhaar);
 
-            historyDiv.innerHTML =
-              (customer.reviews || [])
+            const historyDiv = document.getElementById("reviewHistory");
+            if (customer.reviews && customer.reviews.length > 0) {
+              historyDiv.innerHTML = customer.reviews
                 .map((rev) => {
-                  const rId =
-                    rev.id ||
-                    rev.reviewId ||
-                    rev._id ||
-                    rev.review_id ||
-                    rev.reviewID;
-                  const dId = getReviewOwnerId(rev);
-                  const isOwner =
-                    dId != null && myId != null && String(dId) === String(myId);
-                  const reviewerName =
+                  const currentReviewId = rev.id || rev.reviewId || rev._id;
+                  let borderCol = "border-green-500";
+                  let textCol = "text-green-600";
+                  if (rev.type === "MEDIUM_RISK") {
+                    borderCol = "border-yellow-500";
+                    textCol = "text-yellow-600";
+                  }
+                  if (rev.type === "HIGH_RISK") {
+                    borderCol = "border-red-500";
+                    textCol = "text-red-600";
+                  }
+
+                  // extract various dealer identifiers from review and stored user
+                  const dealerGst =
+                    (rev.dealer &&
+                      (rev.dealer.gstNumber ||
+                        rev.dealer.gstin ||
+                        rev.dealer.gst)) ||
+                    rev.dealerGst ||
+                    rev.gstNumber ||
+                    rev.gstin ||
+                    rev.gst ||
+                    "";
+                  const myGst = (
+                    localStorage.getItem("ps_gst") || ""
+                  ).toUpperCase();
+                  const role = localStorage.getItem("ps_role") || "";
+
+                  // logged dealer id and email (from stored token payload)
+                  let loggedDealerId = "";
+                  try {
+                    const u =
+                      JSON.parse(localStorage.getItem("ps_user") || "{}") || {};
+                    loggedDealerId = (
+                      u.id ||
+                      u.sub ||
+                      u.userId ||
+                      u.dealerId ||
+                      u._id ||
+                      ""
+                    ).toString();
+                  } catch (e) {
+                    loggedDealerId = "";
+                  }
+                  const myEmail = (
+                    localStorage.getItem("ps_email") || ""
+                  ).toLowerCase();
+
+                  // review dealer id, email and name
+                  const reviewDealerId =
+                    (rev.dealer && (rev.dealer.id || rev.dealer._id)) ||
+                    rev.dealerId ||
+                    rev.dealer_id ||
+                    "";
+                  const reviewDealerEmail =
+                    (rev.dealer &&
+                      (rev.dealer.email || rev.dealer.emailAddress)) ||
+                    rev.dealerEmail ||
+                    rev.email ||
+                    rev.ownerEmail ||
+                    rev.createdByEmail ||
+                    "";
+                  const reviewDealerName =
+                    (rev.dealer &&
+                      (rev.dealer.name ||
+                        rev.dealer.shopName ||
+                        rev.dealer.dealerName)) ||
                     rev.dealerName ||
                     rev.createdByName ||
-                    rev.reviewerName ||
-                    rev.dealer?.name ||
-                    rev.createdBy?.name ||
-                    rev.reviewer?.name;
-                  const reviewerLabel = isOwner
-                    ? "Your review"
-                    : reviewerName
-                      ? reviewerName
-                      : "Dealer review";
+                    rev.ownerName ||
+                    "";
 
-                  let border =
-                    rev.type === "HIGH_RISK"
-                      ? "border-red-500"
-                      : rev.type === "MEDIUM_RISK"
-                        ? "border-yellow-500"
-                        : "border-green-500";
-                  let text =
-                    rev.type === "HIGH_RISK"
-                      ? "text-red-600"
-                      : rev.type === "MEDIUM_RISK"
-                        ? "text-yellow-600"
-                        : "text-green-600";
+                  const gstMatch =
+                    myGst &&
+                    dealerGst &&
+                    myGst === (dealerGst || "").toUpperCase();
+                  const idMatch =
+                    loggedDealerId &&
+                    reviewDealerId &&
+                    loggedDealerId === reviewDealerId.toString();
+                  const emailMatch =
+                    myEmail &&
+                    reviewDealerEmail &&
+                    myEmail === (reviewDealerEmail || "").toLowerCase();
+                  const myName = (localStorage.getItem("ps_name") || "")
+                    .toLowerCase()
+                    .trim();
+                  const rNameClean = (reviewDealerName || "")
+                    .toLowerCase()
+                    .trim();
+                  const nameMatch =
+                    myName &&
+                    rNameClean &&
+                    (rNameClean === myName ||
+                      rNameClean.includes(myName) ||
+                      myName.includes(rNameClean));
+                  const canDelete =
+                    role === "ROLE_ADMIN" ||
+                    gstMatch ||
+                    idMatch ||
+                    emailMatch ||
+                    nameMatch;
+
+                  // optional visual debug when ?debug=true
+                  let debugHtml = "";
+                  try {
+                    if (location.search.indexOf("debug=true") !== -1) {
+                      debugHtml = `<div class="text-xs text-gray-400 mt-1">DBG: gst:${dealerGst || "N/A"} myGst:${myGst || "N/A"} email:${myEmail || "N/A"} rEmail:${reviewDealerEmail || "N/A"} rName:${reviewDealerName || "N/A"} idMatch:${idMatch} gstMatch:${gstMatch} emailMatch:${emailMatch} nameMatch:${nameMatch} canDelete:${canDelete}</div>`;
+                    }
+                  } catch (e) {
+                    debugHtml = "";
+                  }
+
+                  const deleteBtn = canDelete
+                    ? `<button onclick="confirmDeleteReview('${currentReviewId}')" aria-label="Delete review" class="ml-2 p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-md transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>`
+                    : `<button disabled aria-disabled="true" title="Only the dealer who posted this review can delete" class="ml-2 p-2 bg-gray-100 text-gray-400 rounded-md cursor-not-allowed opacity-70">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>`;
 
                   return `
-                        <div class="p-3 bg-white rounded border-l-4 ${border} shadow-sm flex flex-col sm:flex-row sm:justify-between gap-3 sm:items-center">
-                            <div>
-                                <div class="flex items-center gap-2 mb-2">
-                                    <span class="text-[10px] font-bold uppercase ${text}">${rev.type}</span>
-                                    <span class="text-xs text-gray-500 uppercase">${reviewerLabel}</span>${isOwner ? '<span class="ml-2 px-1 py-0.5 text-[8px] bg-green-100 text-green-800 rounded uppercase font-semibold">Yours</span>' : ""}
-                                </div>
-                                <p class="text-sm text-gray-800">"${rev.comment}"</p>
-                            </div>
-                            ${
-                              isOwner
-                                ? `<button type="button" data-review-id="${rId}" class="delete-review-button inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-semibold transition text-red-600 hover:bg-red-50 bg-red-50" title="Delete this review">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                </svg>
-                                Delete
-                            </button>`
-                                : ""
-                            }
-                        </div>`;
+                    <div class="p-3 bg-white rounded border-l-4 shadow-sm ${borderCol} flex justify-between items-center mb-2">
+                        <div class="flex-1">
+                            <span class="text-[10px] font-bold uppercase ${textCol}">${rev.type.replace("_", " ")}</span>
+                            ${rev.dealerName || (rev.dealer && rev.dealer.shopName) ? `<div class="text-xs text-gray-500 mt-1">Dealer: ${rev.dealerName || rev.dealer.shopName}</div>` : ""}
+                            <p class="text-sm text-gray-800 mt-1">"${rev.comment}"</p>
+                            ${debugHtml}
+                        </div>
+                        ${deleteBtn}
+                    </div>`;
                 })
-                .join("") ||
-              '<p class="text-center text-gray-400 py-4">No reviews yet.</p>';
-
+                .join("");
+            } else {
+              historyDiv.innerHTML =
+                '<p class="text-center text-gray-400 py-6 text-sm">No History</p>';
+            }
             document.getElementById("reviewSection").classList.remove("hidden");
             document
               .getElementById("registrationSection")
               .classList.add("hidden");
           } else {
             document.getElementById("regAadhaarDisplay").value =
-              `XXXX-XXXX-${rawSearchValue.slice(-4)}`;
+              maskAadhaar(aadhaar);
             document
               .getElementById("registrationSection")
               .classList.remove("hidden");
             document.getElementById("reviewSection").classList.add("hidden");
           }
         } catch (err) {
-          alert(err.message);
+          const errorPopup = document.createElement("div");
+
+          errorPopup.innerHTML = `
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+            <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                <h2 class="text-xl font-bold mb-2">
+                    Error
+                </h2>
+
+                <p class="text-gray-600 mb-5">
+                    ${err.message || "Something went wrong"}
+                </p>
+
+                <button id="searchErrorBtn"
+                    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+                    OK
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+          document.body.appendChild(errorPopup);
+
+          document.getElementById("searchErrorBtn").onclick = () => {
+            errorPopup.remove();
+          };
         }
       }
 
-      async function confirmDelete(id) {
-        showMessage("Deleting review…", "info");
-        console.log("Deleting review", id);
+      document.getElementById("regForm").onsubmit = async (e) => {
+        e.preventDefault();
+
         try {
-          await PawnSecure.deleteReview(id);
+          const res = await PawnSecure.addCustomer({
+            name: regName.value,
+            aadhaar: rawSearchValue,
+            phoneNumber: regPhone.value,
+            customerAddress: customerAddress.value,
+          });
+
+          notify(res.message || "Customer registered successfully", "success");
+
           handleSearch();
-          showMessage("Review deleted successfully.", "success");
         } catch (err) {
-          showMessage(err.message || "Unable to delete review.", "error");
+          notify(err.message || "Failed to register customer", "error");
         }
-      }
+      };
 
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const button = e.target.querySelector('button[type="submit"]');
-          setButtonLoading(button, true, "Signing in");
-          try {
-            const res = await PawnSecure.login({
-              email: loginEmail.value,
-              password: loginPass.value,
-            });
-            localStorage.setItem("ps_token", res.token);
-            localStorage.setItem("ps_role", res.role);
-            location.reload();
-          } catch (err) {
-            showMessage(err.message || "Login failed.", "error");
-          } finally {
-            setButtonLoading(button, false, "Sign In");
-          }
-        });
+      document.getElementById("reviewForm").onsubmit = async (e) => {
+        e.preventDefault();
 
-      document
-        .getElementById("regForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const button = e.target.querySelector('button[type="submit"]');
-          setButtonLoading(button, true, "Registering");
-          try {
-            await PawnSecure.addCustomer({
-              name: regName.value,
-              aadhaar: rawSearchValue,
-              phoneNumber: regPhone.value,
-              customerAddress: regAddress.value,
-            });
-            handleSearch();
-          } catch (err) {
-            showMessage(err.message || "Registration failed.", "error");
-          } finally {
-            setButtonLoading(button, false, "Register Customer");
-          }
-        });
+        try {
+          // ✅ get selected risk from radio pills
+          const selectedRisk = document.querySelector(
+            'input[name="revType"]:checked',
+          );
 
-      document
-        .getElementById("reviewForm")
-        .addEventListener("submit", async (e) => {
-          e.preventDefault();
-          const button = e.target.querySelector('button[type="submit"]');
-          setButtonLoading(button, true, "Submitting");
-          try {
-            await PawnSecure.postReview({
-              customerId: activeCustomerId,
-              type: revType.value,
-              comment: revComment.value,
-            });
-            revComment.value = "";
-            handleSearch();
-            showMessage("Review submitted.", "success");
-          } catch (err) {
-            showMessage(err.message || "Unable to submit review.", "error");
-          } finally {
-            setButtonLoading(button, false, "Submit Review");
-          }
-        });
-
-      document
-        .getElementById("searchAadhaar")
-        .addEventListener("input", (e) => {
-          rawSearchValue = e.target.value.replace(/\D/g, "");
-          e.target.value = rawSearchValue;
-          const searchButton = document.getElementById("searchButton");
-          const hint = document.getElementById("searchHint");
-          const remaining = 12 - rawSearchValue.length;
-          if (remaining <= 0) {
-            searchButton.disabled = false;
-            hint.innerText = "Ready to search.";
-          } else {
-            searchButton.disabled = true;
-            hint.innerText = `${remaining} more digit${remaining === 1 ? "" : "s"} required.`;
-          }
-        });
-
-      document
-        .getElementById("reviewHistory")
-        .addEventListener("click", (event) => {
-          const button = event.target.closest(".delete-review-button");
-          if (!button) return;
-          const reviewId = button.dataset.reviewId;
-          if (!reviewId) {
-            showMessage("Review id is missing; could not delete.", "error");
+          if (!selectedRisk) {
+            notify("Please select a review risk level", "error");
             return;
           }
-          confirmDelete(reviewId);
-        });
 
-      function showView(v) {
-        document
-          .querySelectorAll("main > section")
-          .forEach((s) => s.classList.add("hidden"));
-        document.getElementById(v + "View").classList.remove("hidden");
-        if (window.innerWidth < 768) toggleMobileMenu();
-      }
-      function toggleAuthMode(isReg) {
-        document.getElementById("loginForm").classList.toggle("hidden", isReg);
-        document
-          .getElementById("dealerRegForm")
-          .classList.toggle("hidden", !isReg);
-      }
-      function logout() {
-        localStorage.clear();
-        location.reload();
+          await PawnSecure.postReview({
+            customerId: activeCustomerId,
+            type: selectedRisk.value, // ✅ SAFE / MEDIUM_RISK / HIGH_RISK
+            comment: revComment.value,
+          });
+
+          revComment.value = "";
+
+          // ✅ Success Popup
+          const successPopup = document.createElement("div");
+
+          successPopup.innerHTML = `
+      <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+          <div class="text-green-600 text-5xl mb-3">✔</div>
+
+          <h2 class="text-xl font-bold mb-2">
+            Success
+          </h2>
+
+          <p class="text-gray-600 mb-5">
+            Feedback submitted successfully
+          </p>
+
+          <button id="reviewSuccessBtn"
+            class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+            OK
+          </button>
+        </div>
+      </div>
+    `;
+
+          document.body.appendChild(successPopup);
+
+          document.getElementById("reviewSuccessBtn").onclick = () => {
+            successPopup.remove();
+
+            // ✅ 1. Reset textarea
+            revComment.value = "";
+
+            // ✅ 2. Reset ALL review risk radios (IMPORTANT)
+            const radios = document.querySelectorAll('input[name="revType"]');
+            radios.forEach((radio) => {
+              radio.checked = false;
+            });
+
+            // ✅ 3. Force visual reset (this fixes peer-checked sticking)
+            radios.forEach((radio) => {
+              radio.dispatchEvent(new Event("change", { bubbles: true }));
+            });
+
+            // ✅ 4. Hide inline error if visible
+            const riskError = document.getElementById("riskError");
+            if (riskError) {
+              riskError.classList.add("hidden");
+            }
+
+            // ✅ 5. Refresh review list
+            handleSearch();
+          };
+        } catch (err) {
+          // ✅ Error Popup
+          const errorPopup = document.createElement("div");
+
+          errorPopup.innerHTML = `
+      <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+          <div class="text-red-600 text-5xl mb-3">✖</div>
+
+          <h2 class="text-xl font-bold mb-2">
+            Error
+          </h2>
+
+          <p class="text-gray-600 mb-5">
+            ${err.message || "Failed to submit feedback"}
+          </p>
+
+          <button id="reviewErrorBtn"
+            class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+            OK
+          </button>
+        </div>
+      </div>
+    `;
+
+          document.body.appendChild(errorPopup);
+
+          document.getElementById("reviewErrorBtn").onclick = () => {
+            errorPopup.remove();
+          };
+        }
+      };
+
+      async function confirmDeleteReview(reviewId) {
+        if (!reviewId || reviewId === "undefined") {
+          notify("Error: Review ID is missing", "error");
+          return;
+        }
+
+        askConfirm(
+          "Delete Review?",
+          "This action cannot be undone. This review will be permanently removed from the customer's history.",
+
+          async () => {
+            try {
+              await PawnSecure.deleteReview(reviewId);
+
+              // Custom success modal
+              const successPopup = document.createElement("div");
+
+              successPopup.innerHTML = `
+                    <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                        <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+                            <div class="text-green-600 text-5xl mb-3">✔</div>
+
+                            <h2 class="text-xl font-bold mb-2">
+                                Success
+                            </h2>
+
+                            <p class="text-gray-600 mb-5">
+                                Review deleted successfully
+                            </p>
+
+                            <button id="successOkBtn"
+                                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+              document.body.appendChild(successPopup);
+
+              document.getElementById("successOkBtn").onclick = () => {
+                successPopup.remove();
+                handleSearch();
+              };
+            } catch (err) {
+              const errorPopup = document.createElement("div");
+
+              errorPopup.innerHTML = `
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                <h2 class="text-xl font-bold mb-2">
+                    Error
+                </h2>
+
+                <p class="text-gray-600 mb-5">
+                    ${err.message || "Failed to delete review"}
+                </p>
+
+                <button id="errorOkBtn"
+                    class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+                    OK
+                </button>
+
+            </div>
+        </div>
+    `;
+
+              document.body.appendChild(errorPopup);
+
+              document.getElementById("errorOkBtn").onclick = () => {
+                errorPopup.remove();
+              };
+            }
+          },
+        );
       }
 
-      document
-        .getElementById("mobileNavToggle")
-        .addEventListener("click", toggleMobileMenu);
+      async function loadDealers() {
+        try {
+          const dealers = await PawnSecure.fetchDealers();
+          const now = new Date();
+          document.getElementById("dealerTableBody").innerHTML = dealers
+            .map((d) => {
+              const subEnd = d.subscriptionEnd
+                ? new Date(d.subscriptionEnd)
+                : null;
+              const isActive = subEnd && subEnd > now;
+              let status = d.status;
+              if (status === "PENDING" && isActive) status = "APPROVED";
+
+              const isAppr = status === "APPROVED";
+              const canAppr = d.status === "PENDING" && !d.subscriptionEnd;
+              const canRen =
+                !isActive && (isAppr || d.subscriptionEnd !== null);
+
+              return `
+            <tr>
+                <td class="p-4 font-bold text-sm text-gray-700">${d.shopName}</td>
+                <td class="p-4 font-mono text-xs text-gray-600">${d.gstNumber || "N/A"}</td>
+                
+                <td class="p-4 font-mono text-xs text-gray-600">${d.phoneNumber || "N/A"}</td>
+
+                <td class="p-4"><span class="text-xs font-bold ${isAppr ? "text-green-600" : "text-orange-500"}">${status}</span></td>
+                <td class="p-4 flex gap-2">
+                    <button onclick="handleApprove(${d.id})" ${!canAppr ? "disabled" : ""} class="px-3 py-1.5 rounded-md text-xs font-bold transition-all ${!canAppr ? "bg-gray-100 text-gray-400 border" : "bg-indigo-600 text-white"}">${isAppr && !canAppr ? "Approved" : "Approve"}</button>
+                    <button onclick="handleRenew(${d.id})" ${!canRen ? "disabled" : ""} class="px-3 py-1.5 rounded-md text-xs font-bold transition-all ${!canRen ? "bg-gray-100 text-gray-400 border" : "bg-emerald-600 text-white"}">Renew</button>
+                </td>
+            </tr>`;
+            })
+            .join("");
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
+      async function handleApprove(id) {
+        try {
+          await PawnSecure.approveDealer(id);
+
+          // Success Popup
+          const successPopup = document.createElement("div");
+
+          successPopup.innerHTML = `
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                    <div class="text-green-600 text-5xl mb-3">✔</div>
+
+                    <h2 class="text-xl font-bold mb-2">
+                        Success
+                    </h2>
+
+                    <p class="text-gray-600 mb-5">
+                        Dealer account approved successfully
+                    </p>
+
+                    <button id="approveSuccessBtn"
+                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+                        OK
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+          document.body.appendChild(successPopup);
+
+          document.getElementById("approveSuccessBtn").onclick = () => {
+            successPopup.remove();
+            loadDealers();
+          };
+        } catch (err) {
+          // Error Popup
+          const errorPopup = document.createElement("div");
+
+          errorPopup.innerHTML = `
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                    <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                    <h2 class="text-xl font-bold mb-2">
+                        Error
+                    </h2>
+
+                    <p class="text-gray-600 mb-5">
+                        ${err.message || "Failed to approve dealer"}
+                    </p>
+
+                    <button id="approveErrorBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+                        OK
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+          document.body.appendChild(errorPopup);
+
+          document.getElementById("approveErrorBtn").onclick = () => {
+            errorPopup.remove();
+          };
+        }
+      }
+
+      async function handleRenew(id) {
+        try {
+          await PawnSecure.renewDealer(id);
+
+          // Success Popup
+          const successPopup = document.createElement("div");
+
+          successPopup.innerHTML = `
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                    <div class="text-green-600 text-5xl mb-3">✔</div>
+
+                    <h2 class="text-xl font-bold mb-2">
+                        Success
+                    </h2>
+
+                    <p class="text-gray-600 mb-5">
+                        Subscription renewed successfully
+                    </p>
+
+                    <button id="renewSuccessBtn"
+                        class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg">
+                        OK
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+          document.body.appendChild(successPopup);
+
+          document.getElementById("renewSuccessBtn").onclick = () => {
+            successPopup.remove();
+            loadDealers();
+          };
+        } catch (err) {
+          // Error Popup
+          const errorPopup = document.createElement("div");
+
+          errorPopup.innerHTML = `
+            <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                    <div class="text-red-600 text-5xl mb-3">✖</div>
+
+                    <h2 class="text-xl font-bold mb-2">
+                        Error
+                    </h2>
+
+                    <p class="text-gray-600 mb-5">
+                        ${err.message || "Failed to renew subscription"}
+                    </p>
+
+                    <button id="renewErrorBtn"
+                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg">
+                        OK
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+          document.body.appendChild(errorPopup);
+
+          document.getElementById("renewErrorBtn").onclick = () => {
+            errorPopup.remove();
+          };
+        }
+      }
 
       window.onload = () => {
         const role = localStorage.getItem("ps_role");
         if (role) {
           document.getElementById("navLinks").classList.remove("hidden");
-          if (role.includes("ADMIN")) {
+          if (role === "ROLE_ADMIN") {
             document.getElementById("adminNav").classList.remove("hidden");
             showView("dealerList");
+            loadDealers();
           } else {
             document.getElementById("dealerNav").classList.remove("hidden");
             showView("dealerDashboard");
           }
         }
-        document
-          .getElementById("searchAadhaar")
-          .dispatchEvent(new Event("input"));
       };
+
+      function logout() {
+        askConfirm(
+          "Logout?",
+          "Are you sure you want to logout from PawnSecure?",
+
+          () => {
+            localStorage.clear();
+
+            // Success popup
+            const successPopup = document.createElement("div");
+
+            successPopup.innerHTML = `
+                <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+                    <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                        <div class="text-green-600 text-5xl mb-3">
+                            ✔
+                        </div>
+
+                        <h2 class="text-xl font-bold mb-2">
+                            Success
+                        </h2>
+
+                        <p id="logoutMsg" class="text-gray-600 mb-2">
+                            Logged out successfully
+                        </p>
+
+                    </div>
+
+                </div>
+            `;
+
+            document.body.appendChild(successPopup);
+
+            // Change message after 2 seconds
+            setTimeout(() => {
+              const msg = document.getElementById("logoutMsg");
+
+              if (msg) {
+                msg.innerHTML = `
+                        <span class="text-indigo-600 font-semibold">
+                            Redirecting to login...
+                        </span>
+                    `;
+              }
+            }, 2000);
+
+            // Auto reload after 3 seconds
+            setTimeout(() => {
+              successPopup.remove();
+
+              location.reload();
+            }, 3000);
+          },
+        );
+      }
+
+      function notify(msg, type = "success") {
+        let icon = "✔";
+        let title = "Success";
+        let btnColor = "bg-green-600 hover:bg-green-700";
+        let iconColor = "text-green-600";
+
+        if (type === "error") {
+          icon = "✖";
+          title = "Error";
+          btnColor = "bg-red-600 hover:bg-red-700";
+          iconColor = "text-red-600";
+        }
+
+        if (type === "info") {
+          icon = "ℹ";
+          title = "Information";
+          btnColor = "bg-indigo-600 hover:bg-indigo-700";
+          iconColor = "text-indigo-600";
+        }
+
+        const popup = document.createElement("div");
+
+        popup.innerHTML = `
+        <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+
+            <div class="bg-white rounded-xl p-6 w-[350px] shadow-2xl text-center">
+
+                <div class="${iconColor} text-5xl mb-3">
+                    ${icon}
+                </div>
+
+                <h2 class="text-xl font-bold mb-2">
+                    ${title}
+                </h2>
+
+                <p class="text-gray-600 mb-5">
+                    ${msg}
+                </p>
+
+                <button id="popupOkBtn"
+                    class="${btnColor} text-white px-5 py-2 rounded-lg">
+                    OK
+                </button>
+
+            </div>
+
+        </div>
+    `;
+
+        document.body.appendChild(popup);
+
+        document.getElementById("popupOkBtn").onclick = () => {
+          popup.remove();
+        };
+      }
+      function askConfirm(title, message, onConfirm) {
+        const modal = document.getElementById("confirmModal");
+        document.getElementById("modalTitle").innerText = title;
+        document.getElementById("modalMessage").innerText = message;
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        const btn = document.getElementById("modalConfirmBtn");
+        // Clear previous listeners
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.onclick = () => {
+          onConfirm();
+          closeConfirmModal();
+        };
+      }
+
+      let __modalOnClose = null;
+      function closeConfirmModal() {
+        const modal = document.getElementById("confirmModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        try {
+          if (typeof __modalOnClose === "function") __modalOnClose();
+        } catch (e) {
+          console.error(e);
+        }
+        __modalOnClose = null;
+      }
+
+      // Show an informational modal using the same confirm modal (supports HTML message)
+      function showInfoModal(title, htmlMessage, onClose) {
+        try {
+          const modal = document.getElementById("confirmModal");
+          document.getElementById("modalTitle").innerText = title;
+          document.getElementById("modalMessage").innerHTML = htmlMessage;
+          // set confirm button text to OK
+          const btn = document.getElementById("modalConfirmBtn");
+          const newBtn = btn.cloneNode(true);
+          newBtn.innerText = "OK";
+          btn.parentNode.replaceChild(newBtn, btn);
+
+          __modalOnClose = onClose || null;
+
+          modal.classList.remove("hidden");
+          modal.classList.add("flex");
+
+          newBtn.onclick = () => closeConfirmModal();
+          // wire cancel to also close
+          // cancel button already calls closeConfirmModal via onclick in markup
+        } catch (e) {
+          console.error(e);
+        }
+      }
+
+      // Deprecated visual registration modal removed; use showInfoModal instead for success flow.
+    </script>
+    <div
+      id="toastContainer"
+      class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2"
+    ></div>
+
+    <!-- Custom Confirmation Modal -->
+    <div
+      id="confirmModal"
+      class="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-[110] hidden flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 scale-95 transition-transform"
+      >
+        <h3 class="text-lg font-bold text-gray-800 mb-2" id="modalTitle">
+          Confirm Action
+        </h3>
+        <p class="text-gray-600 text-sm mb-6" id="modalMessage">
+          Are you sure you want to proceed?
+        </p>
+        <div class="flex justify-end gap-3">
+          <button
+            onclick="closeConfirmModal()"
+            class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+          >
+            Cancel
+          </button>
+          <button
+            id="modalConfirmBtn"
+            class="px-4 py-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
+      <!-- Registration Success Modal -->
+      <div
+        id="regSuccessModal"
+        class="fixed inset-0 bg-black/40 z-[115] hidden items-center justify-center p-4"
+      >
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="text-lg font-bold text-gray-800">
+                Registration Successful
+              </h3>
+              <p class="text-sm text-gray-600 mt-2">Awaiting Admin Approval.</p>
+            </div>
+            <button
+              id="regModalClose"
+              class="text-gray-400 hover:text-gray-600"
+            >
+              &times;
+            </button>
+          </div>
+          <div class="mt-6 flex items-center justify-between">
+            <div class="text-sm text-gray-600">
+              Contact via WhatsApp to follow up:
+            </div>
+            <a
+              id="regWhatsApp"
+              class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-2 rounded-full"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+              >
+                <path
+                  d="M20.52 3.478A11.943 11.943 0 0012 0C5.373 0 .01 5.373.01 12.001c0 2.115.55 4.16 1.59 5.98L0 24l5.31-1.38A11.933 11.933 0 0012 24c6.627 0 12-5.373 12-12 0-3.197-1.246-6.197-3.48-8.522z"
+                  fill="#25D366"
+                />
+                <path
+                  d="M17.46 14.28c-.28-.14-1.66-.82-1.92-.92-.26-.1-.45-.14-.64.14-.18.28-.7.92-.86 1.11-.16.18-.31.2-.59.07-.28-.14-1.18-.43-2.25-1.38-.83-.74-1.39-1.66-1.55-1.94-.16-.28-.02-.43.12-.57.12-.12.28-.31.42-.47.14-.16.18-.28.28-.46.09-.18.04-.34-.02-.47-.07-.14-.64-1.54-.88-2.12-.23-.56-.47-.48-.64-.49l-.55-.01c-.18 0-.47.07-.72.34-.26.28-1 1-1 2.44s1.03 2.83 1.17 3.03c.14.18 2.03 3.1 4.92 4.35 1.64.7 2.32.78 3.15.66.51-.07 1.66-.68 1.9-1.34.24-.66.24-1.22.17-1.34-.07-.12-.26-.18-.55-.31z"
+                  fill="#fff"
+                />
+              </svg>
+              <span class="text-sm font-medium">WhatsApp</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Dev debug panel: visible only when ?debug=true
+      (function () {
+        try {
+          if (location.search.indexOf("debug=true") === -1) return;
+
+          const panel = document.createElement("div");
+          panel.style.cssText =
+            "position:fixed;right:16px;bottom:16px;background:#fff;border:1px solid #e5e7eb;padding:10px;border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,0.12);z-index:99999;width:320px;font-family:Inter,system-ui,sans-serif;font-size:13px";
+
+          function read() {
+            return {
+              ps_user: localStorage.getItem("ps_user") || "null",
+              ps_name: localStorage.getItem("ps_name") || "null",
+              ps_email: localStorage.getItem("ps_email") || "null",
+              ps_gst: localStorage.getItem("ps_gst") || "null",
+              ps_role: localStorage.getItem("ps_role") || "null",
+            };
+          }
+
+          function render() {
+            const s = read();
+            panel.innerHTML = `
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <strong>Dev Debug Panel</strong>
+                            <button id="dbgClose" style="background:#ef4444;color:#fff;border:none;padding:3px 6px;border-radius:6px;cursor:pointer">X</button>
+                        </div>
+                        <div style="line-height:1.2;margin-bottom:8px">
+                            <div><strong>ps_user</strong>: <span id="v_user">${s.ps_user}</span></div>
+                            <div><strong>ps_name</strong>: <span id="v_name">${s.ps_name}</span></div>
+                            <div><strong>ps_email</strong>: <span id="v_email">${s.ps_email}</span></div>
+                            <div><strong>ps_gst</strong>: <span id="v_gst">${s.ps_gst}</span></div>
+                            <div><strong>ps_role</strong>: <span id="v_role">${s.ps_role}</span></div>
+                        </div>
+                        <div style="display:flex;gap:6px;flex-wrap:wrap">
+                            <button id="impSuresh" style="flex:1;background:#6366f1;color:#fff;border:none;padding:6px;border-radius:6px;cursor:pointer">Impersonate Suresh</button>
+                            <button id="impDinesh" style="flex:1;background:#10b981;color:#fff;border:none;padding:6px;border-radius:6px;cursor:pointer">Impersonate Dinesh</button>
+                            <button id="clearDbg" style="flex:1;background:#9ca3af;color:#fff;border:none;padding:6px;border-radius:6px;cursor:pointer">Clear</button>
+                        </div>
+                        <div style="margin-top:8px;font-size:12px;color:#6b7280">Tip: use this to set <code>ps_name</code>/<code>ps_email</code>/<code>ps_gst</code> for testing delete permissions.</div>
+                    `;
+
+            document.body.appendChild(panel);
+
+            document.getElementById("dbgClose").onclick = () => panel.remove();
+
+            document.getElementById("impSuresh").onclick = () => {
+              localStorage.setItem("ps_role", "ROLE_DEALER");
+              localStorage.setItem("ps_name", "suresh sencha");
+              localStorage.setItem("ps_email", "suresh@example.com");
+              localStorage.setItem("ps_gst", "GST-SURESH-000");
+              localStorage.setItem(
+                "ps_user",
+                JSON.stringify({
+                  id: "dealer-suresh-1",
+                  name: "Suresh Sencha",
+                  email: "suresh@example.com",
+                }),
+              );
+              renderRefresh();
+            };
+
+            document.getElementById("impDinesh").onclick = () => {
+              localStorage.setItem("ps_role", "ROLE_DEALER");
+              localStorage.setItem("ps_name", "dinesh seervi");
+              localStorage.setItem("ps_email", "dinesh@example.com");
+              localStorage.setItem("ps_gst", "GST-DINESH-111");
+              localStorage.setItem(
+                "ps_user",
+                JSON.stringify({
+                  id: "dealer-dinesh-1",
+                  name: "Dinesh Seervi",
+                  email: "dinesh@example.com",
+                }),
+              );
+              renderRefresh();
+            };
+
+            document.getElementById("clearDbg").onclick = () => {
+              localStorage.removeItem("ps_role");
+              localStorage.removeItem("ps_name");
+              localStorage.removeItem("ps_email");
+              localStorage.removeItem("ps_gst");
+              localStorage.removeItem("ps_user");
+              renderRefresh();
+            };
+          }
+
+          function renderRefresh() {
+            const vals = read();
+            const el = document.getElementById("v_user");
+            if (el) el.textContent = vals.ps_user;
+            const en = document.getElementById("v_name");
+            if (en) en.textContent = vals.ps_name;
+            const ee = document.getElementById("v_email");
+            if (ee) ee.textContent = vals.ps_email;
+            const eg = document.getElementById("v_gst");
+            if (eg) eg.textContent = vals.ps_gst;
+            const er = document.getElementById("v_role");
+            if (er) er.textContent = vals.ps_role;
+            // refresh page to re-render reviews with new permissions
+            try {
+              setTimeout(() => location.reload(), 300);
+            } catch (e) {
+              /* ignore */
+            }
+          }
+
+          render();
+        } catch (e) {
+          console.error("debug panel error", e);
+        }
+      })();
+
+      function openTermsModal() {
+        document.body.classList.add("modal-open");
+        const modal = document.getElementById("termsModal");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function closeTermsModal() {
+        document.body.classList.remove("modal-open");
+        const modal = document.getElementById("termsModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+
+      function acceptTerms() {
+        document.getElementById("termsCheckbox").checked = true;
+        closeTermsModal();
+      }
+      function togglePassword() {
+        const p = document.getElementById("loginPass");
+        p.type = p.type === "password" ? "text" : "password";
+      }
+
+      function openForgotPassword() {
+        document.getElementById("forgotModal").classList.remove("hidden");
+        document.getElementById("forgotModal").classList.add("flex");
+      }
+
+      function closeForgotPassword() {
+        document.getElementById("forgotModal").classList.add("hidden");
+        document.getElementById("forgotModal").classList.remove("flex");
+      }
+
+      async function sendForgotPassword() {
+        const email = document.getElementById("forgotEmail").value.trim();
+        if (!email) {
+          notify("Please enter email", "error");
+          return;
+        }
+
+        try {
+          await fetch(`${API_BASE}/auth/forgot-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email }),
+          });
+
+          closeForgotPassword();
+          notify("Reset link sent to your email", "success");
+
+          // Optional: auto open reset modal
+          setTimeout(() => {
+            document.getElementById("resetModal").classList.remove("hidden");
+            document.getElementById("resetModal").classList.add("flex");
+          }, 800);
+        } catch (err) {
+          notify("Failed to send reset email", "error");
+        }
+      }
+
+      function closeResetPassword() {
+        document.getElementById("resetModal").classList.add("hidden");
+        document.getElementById("resetModal").classList.remove("flex");
+      }
+
+      async function resetPassword() {
+        const token = document.getElementById("resetToken").value.trim();
+        const password = document.getElementById("newPassword").value;
+
+        if (!token || !password) {
+          notify("All fields required", "error");
+          return;
+        }
+
+        try {
+          await fetch(`${API_BASE}/auth/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, password }),
+          });
+
+          closeResetPassword();
+          notify("Password reset successful", "success");
+        } catch (err) {
+          notify("Failed to reset password", "error");
+        }
+      }
+      window.addEventListener("load", () => {
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get("token");
+
+        if (token) {
+          document.getElementById("resetToken").value = token;
+          document.getElementById("resetModal").classList.remove("hidden");
+          document.getElementById("resetModal").classList.add("flex");
+        }
+      });
+      async function resetPassword() {
+        const token = document.getElementById("resetToken").value;
+        const newPassword = document.getElementById("newPassword").value;
+
+        if (!newPassword) {
+          notify("Please enter new password", "error");
+          return;
+        }
+
+        try {
+          await fetch(`${API_BASE}/auth/reset-password`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              token: token,
+              newPassword: newPassword,
+            }),
+          });
+
+          closeResetPassword();
+          notify("Password reset successful. Please login.", "success");
+
+          // Clean URL (remove token)
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+        } catch (err) {
+          notify("Reset token invalid or expired", "error");
+        }
+      }
+      function closeResetPassword() {
+        document.getElementById("resetModal").classList.add("hidden");
+        document.getElementById("resetModal").classList.remove("flex");
+      }
     </script>
   </body>
 </html>
